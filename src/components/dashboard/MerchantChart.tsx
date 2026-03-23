@@ -122,7 +122,7 @@ export function MerchantChart() {
                   <div className="text-2xl font-black text-slate-900 tracking-tighter">
                     {chartData.reduce((acc: number, cur: MerchantData) => acc + cur.value, 0).toLocaleString()}
                   </div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Txns</div>
+                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Transactions</div>
                 </div>
               </AnimatedText>
             </div>

@@ -116,7 +116,7 @@ export function LiveFeed() {
                           </span>
                         )}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 opacity-60">TXN: {tx.transactionId}</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 opacity-60">Transaction: {tx.transactionId}</div>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <div className={`font-bold text-base ${isFrozen ? 'text-slate-400 line-through opacity-50' : 'text-slate-900'}`}>

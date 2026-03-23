@@ -67,7 +67,7 @@ export default function Dashboard() {
       refreshInterval: isSimulating ? 1500 : 0,
       fetcher: (url: string) => fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`).then(res => res.json())
     }}>
-      <div className="min-h-screen bg-slate-50 relative pb-20" ref={dashboardRef}>
+      <div className="min-h-screen bg-slate-100 relative pb-20" ref={dashboardRef}>
         {/* Subtle Grid Pattern */}
         <div className="fixed inset-0 bg-[linear-gradient(to_right,#00000004_1px,transparent_1px),linear-gradient(to_bottom,#00000004_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
@@ -91,7 +91,7 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
                     <Zap className="h-3.5 w-3.5 text-slate-500" />
                     <span className="text-xs font-bold text-slate-700">
-                      {stats?.totalTransactions?.toLocaleString() || '---'} Txns
+                      {stats?.totalTransactions?.toLocaleString() || '---'} Transactions
                     </span>
                   </div>
                   <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">

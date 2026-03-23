@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en" className={outfit.variable}>
       <head>
       </head>
-      <body className="font-outfit antialiased selection:bg-primary-100 selection:text-primary-900 bg-slate-50">
+      <body className="font-outfit antialiased selection:bg-primary-100 selection:text-primary-900 bg-slate-100">
         <BeforeUnloadHandler />
         <div className="flex h-screen overflow-hidden">
           <Sidebar />

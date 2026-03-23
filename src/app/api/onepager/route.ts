@@ -36,7 +36,7 @@ Analysis of **${stats.totalTransactions.toLocaleString()} transactions** reveale
 
 ### 2. High-Risk Merchant Categories
 
-| Category | Total Txns | Fraud Cases | Fraud Rate |
+| Category | Total Transactions | Fraud Cases | Fraud Rate |
 |----------|------------|-------------|------------|
 | Crypto Exchange | ${cryptoFraud?.total.toLocaleString() || 'N/A'} | ${cryptoFraud?.fraud || 0} | **${cryptoFraud?.rate || 0}%** |
 | Electronics | ${electronicsFraud?.total.toLocaleString() || 'N/A'} | ${electronicsFraud?.fraud || 0} | **${electronicsFraud?.rate || 0}%** |

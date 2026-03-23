@@ -161,7 +161,7 @@ export function RepeatOffendersList() {
                 </td>
                 <td className="px-3 py-2">
                   <div className="font-bold text-slate-900 text-xs tracking-tight">{user.userId}</div>
-                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 opacity-60 truncate max-w-[150px]">{user.txCount} txns</div>
+                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 opacity-60 truncate max-w-[150px]">{user.txCount} transactions</div>
                 </td>
                 <td className="px-3 py-2 text-center">
                   <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border border-red-100 whitespace-nowrap">

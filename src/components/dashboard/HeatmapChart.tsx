@@ -85,7 +85,7 @@ export function HeatmapChart() {
             {/* Legend */}
             <AnimatedReveal delay={0.7}>
               <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                <span className="text-[10px] font-bold text-slate-400">LOW</span>
+                <span className="text-xs font-bold text-slate-500 tracking-wider">LOW</span>
                 <div className="flex gap-0.5">
                   {[0, 1, 2, 3].map((i) => (
                     <motion.div
@@ -101,7 +101,7 @@ export function HeatmapChart() {
                     />
                   ))}
                 </div>
-                <span className="text-[10px] font-bold text-slate-400">HIGH</span>
+                <span className="text-xs font-bold text-slate-500 tracking-wider">HIGH</span>
               </div>
             </AnimatedReveal>
           </div>
@@ -119,7 +119,7 @@ export function HeatmapChart() {
             <div className="flex mb-4 pl-12">
               <div className="flex-1 flex justify-between">
                 {[0, 6, 12, 18, 23].map((h) => (
-                  <div key={h} className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center" style={{ width: `${(1/24)*100}%`, marginLeft: h === 0 ? 0 : `${(h - [0, 6, 12, 18, 23][[0, 6, 12, 18, 23].indexOf(h)-1] - 1)/24 * 100}%` }}>
+                  <div key={h} className="text-xs font-bold text-slate-500 uppercase tracking-widest text-center" style={{ width: `${(1/24)*100}%`, marginLeft: h === 0 ? 0 : `${(h - [0, 6, 12, 18, 23][[0, 6, 12, 18, 23].indexOf(h)-1] - 1)/24 * 100}%` }}>
                     {h === 0 ? '12am' : h === 12 ? '12pm' : h > 12 ? `${h-12}pm` : `${h}am`}
                   </div>
                 ))}
@@ -127,17 +127,17 @@ export function HeatmapChart() {
             </div>
 
             {/* Grid Rows */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               {DAYS.map((day, dIdx) => (
                 <div key={day} className="flex items-center gap-4">
-                  <div className="w-8 text-[10px] font-bold text-slate-400 text-right uppercase tracking-wider">{day}</div>
-                  <div className="flex-1 flex gap-1">
+                  <div className="w-8 text-xs font-bold text-slate-600 text-right uppercase tracking-wider">{day}</div>
+                  <div className="flex-1 flex gap-1.5">
                     {heatmapData[dIdx].map((val: number, hIdx: number) => (
                       <motion.div
                         key={hIdx}
                         title={`${day} ${hIdx}:00 — ${val} flagged`}
                         className={`
-                          flex-1 aspect-square rounded-sm transition-all duration-200
+                          flex-1 h-6 sm:h-8 rounded-sm transition-all duration-200
                           hover:scale-110 hover:z-10 cursor-pointer
                           ${getColor(val)}
                         `}

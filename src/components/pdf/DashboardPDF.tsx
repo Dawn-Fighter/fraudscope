@@ -308,7 +308,7 @@ export function DashboardPDF({ stats, cityStats, merchantStats, chartImages, gen
             <View style={styles.metricsTable}>
               <View style={[styles.tableRow, styles.tableHeader]}>
                 <Text style={[styles.tableCell, styles.tableCellHeader]}>Category</Text>
-                <Text style={[styles.tableCell, styles.tableCellHeader]}>Txns</Text>
+                <Text style={[styles.tableCell, styles.tableCellHeader]}>Transactions</Text>
                 <Text style={[styles.tableCell, styles.tableCellHeader]}>Fraud %</Text>
               </View>
               {merchantStats && merchantStats.length > 0 ? (

@@ -49,9 +49,11 @@ export function KPICards() {
     },
     {
       title: "Top Risk Category",
-      value: data.highestRiskCategory || "N/A",
+      value: data.highestRiskCategory ? data.highestRiskCategory.split(' (')[0] : "N/A",
       icon: TrendingUp,
-      subtitle: "By percentage",
+      subtitle: data.highestRiskCategory && data.highestRiskCategory.includes('(') 
+        ? `${data.highestRiskCategory.split(' (')[1].replace(')', '')} fraud rate` 
+        : "By percentage",
       accent: "bg-primary-500",
       bgClass: "bg-white hover:bg-slate-50",
       iconBg: "bg-primary-50 text-primary-600 border-primary-100",
@@ -113,8 +115,8 @@ export function KPICards() {
             <div className="space-y-1 relative z-10">
               <AnimatedText delay={0.25 + (i * 0.05)}>
                 <p 
-                  className={`text-2xl sm:text-3xl font-black tracking-tight line-clamp-2 leading-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}
-                  title={kpi.value}
+                  className={`${String(kpi.value).length > 12 ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl'} font-black tracking-tight line-clamp-2 leading-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}
+                  title={String(kpi.value)}
                 >
                   {kpi.value}
                 </p>

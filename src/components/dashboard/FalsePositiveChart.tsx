@@ -63,7 +63,7 @@ export function FalsePositiveChart() {
               <AnimatedText delay={0.95}>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">False Positive Tracker</h3>
-                  <p className="text-xs text-slate-400 font-medium whitespace-nowrap">Legitimate txns incorrectly flagged</p>
+                  <p className="text-xs text-slate-400 font-medium whitespace-nowrap">Legitimate transactions incorrectly flagged</p>
                 </div>
               </AnimatedText>
             </div>
