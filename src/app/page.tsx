@@ -77,53 +77,44 @@ export default function Dashboard() {
             <KPICards />
           </section>
 
-          {/* Main Charts Grid */}
-          <section className="grid grid-cols-12 gap-4 mb-4">
-            {/* Velocity */}
-            <div className="col-span-12 xl:col-span-8">
+          {/* Dashboard Layout */}
+          <div className="flex flex-col xl:flex-row gap-4">
+            {/* Left Column (Main Content) */}
+            <div className="flex-1 flex flex-col gap-4 min-w-0">
               <VelocityChart />
-            </div>
-
-            {/* Live Feed - Extended Sidebar */}
-            <div className="col-span-12 xl:col-span-4 xl:row-span-4 self-start sticky top-[70px]">
-              <LiveFeed />
-            </div>
-
-            {/* Heatmap - Lifted directly below Velocity */}
-            <div className="col-span-12 xl:col-span-8 -mt-2">
               <HeatmapChart />
-            </div>
-            
-            {/* Risk Factors Row - Lifted below Heatmap */}
-            <div className="col-span-12 lg:col-span-4 xl:col-span-4 -mt-2">
-              <MerchantChart />
-            </div>
-            <div className="col-span-12 lg:col-span-4 xl:col-span-4 -mt-2">
-              <CityChart />
-            </div>
-          </section>
-
-          {/* Risk Section */}
-          <section className="mb-4">
-            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Risk Intelligence</h2>
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 lg:col-span-6">
-                <FalsePositiveChart />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <MerchantChart />
+                <CityChart />
               </div>
-              <div className="col-span-12 lg:col-span-6">
-                <ImpossibleTravelFeed />
+
+              {/* Risk Section */}
+              <section className="mt-2">
+                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Risk Intelligence</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FalsePositiveChart />
+                  <ImpossibleTravelFeed />
+                </div>
+              </section>
+
+              {/* Threat Intelligence Section */}
+              <section className="mt-2">
+                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Threat Intelligence</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <ThreatRadarChart />
+                  <FlaggedCategoryChart />
+                </div>
+              </section>
+            </div>
+
+            {/* Right Column (Sidebar) */}
+            <div className="w-full xl:w-[380px] shrink-0">
+              <div className="sticky top-[80px] h-[calc(100vh-100px)]">
+                <LiveFeed />
               </div>
             </div>
-          </section>
-
-          {/* Flagged Categories Section */}
-          <section>
-            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Threat Intelligence</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ThreatRadarChart />
-              <FlaggedCategoryChart />
-            </div>
-          </section>
+          </div>
         </main>
       </div>
 
