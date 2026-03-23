@@ -12,6 +12,67 @@ export interface Transaction {
 }
 
 let cachedData: Transaction[] | null = null;
+let simulationInterval: NodeJS.Timeout | null = null;
+let isSimulatingFlag = false;
+
+const MOCK_CITIES = ['New York', 'London', 'Tokyo', 'Lagos', 'Dubai', 'Moscow', 'São Paulo', 'Miami', 'Singapore', 'Mumbai'];
+const MOCK_CATEGORIES = ['Crypto Exchange', 'Electronics', 'Luxury Goods', 'Travel', 'Online Gambling'];
+
+export function startSimulation() {
+  if (isSimulatingFlag) return;
+  isSimulatingFlag = true;
+  
+  // Make sure data is loaded first
+  loadTransactions();
+
+  // Keep track of recent simulation users to trigger velocity/travel anomalies
+  const activeSimUsers: string[] = [];
+
+  simulationInterval = setInterval(() => {
+    if (!cachedData) return;
+    
+    // Generate 1-3 new flagged transactions
+    const count = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < count; i++) {
+      const isHighValue = Math.random() > 0.7;
+      const amount = isHighValue ? Math.random() * 5000 + 1000 : Math.random() * 500 + 10;
+      
+      // 40% chance to reuse an active user to trigger velocity & travel anomalies
+      let userId;
+      if (Math.random() < 0.4 && activeSimUsers.length > 0) {
+        userId = activeSimUsers[Math.floor(Math.random() * activeSimUsers.length)];
+      } else {
+        userId = `U-${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`;
+        activeSimUsers.push(userId);
+        if (activeSimUsers.length > 10) activeSimUsers.shift();
+      }
+      
+      const newTx: Transaction = {
+        Transaction_ID: `SIM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        User_ID: userId,
+        Timestamp: new Date().toISOString(), // Current real time so it shows up as NEW
+        Amount_USD: parseFloat(amount.toFixed(2)),
+        Merchant_Category: MOCK_CATEGORIES[Math.floor(Math.random() * MOCK_CATEGORIES.length)],
+        Location_City: MOCK_CITIES[Math.floor(Math.random() * MOCK_CITIES.length)],
+        Status: 'Flagged',
+      };
+      
+      cachedData.push(newTx);
+    }
+  }, 2000); // Add new data every 2 seconds
+}
+
+export function stopSimulation() {
+  isSimulatingFlag = false;
+  if (simulationInterval) {
+    clearInterval(simulationInterval);
+    simulationInterval = null;
+  }
+}
+
+export function getIsSimulating() {
+  return isSimulatingFlag;
+}
 
 export function loadTransactions(): Transaction[] {
   if (cachedData) return cachedData;

@@ -16,7 +16,7 @@ interface Alert {
 }
 
 export function LiveFeed() {
-  const { data, isLoading } = useSWR<Alert[]>("/api/feed", fetcher, { refreshInterval: 5000 });
+  const { data, isLoading } = useSWR<Alert[]>("/api/feed", fetcher);
   const [frozenUsers, setFrozenUsers] = useState<Set<string>>(new Set());
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
