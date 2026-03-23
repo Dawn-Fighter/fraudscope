@@ -2,6 +2,8 @@
 
 import useSWR from "swr";
 import { Activity, AlertTriangle, Plane, TrendingUp, Clock, CalendarDays } from "lucide-react";
+import { AnimatedReveal, AnimatedNumber, AnimatedText, ANIMATION_EASING } from "@/components/ui/AnimatedReveal";
+import { motion } from "framer-motion";
 
 
 export function KPICards() {
@@ -49,7 +51,7 @@ export function KPICards() {
       title: "Top Risk Category",
       value: data.highestRiskCategory || "N/A",
       icon: TrendingUp,
-      subtitle: `${data.topRiskCategory?.rate || 0}% rate`,
+      subtitle: "By percentage",
       accent: "bg-primary-500",
       bgClass: "bg-white hover:bg-slate-50",
       iconBg: "bg-primary-50 text-primary-600 border-primary-100",
@@ -79,33 +81,49 @@ export function KPICards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 text-slate-900">
       {kpis.map((kpi, i) => (
-        <div 
-          key={i} 
-          className={`relative rounded-2xl p-5 border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden ${kpi.bgClass || 'bg-white border-slate-200'}`}
-        >
-          {/* Subtle Accent Glow */}
-          {!kpi.darkTheme && (
-            <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 ${kpi.accent} pointer-events-none`} />
-          )}
-          
-          <div className="flex items-center gap-3 mb-4">
-            <div className={`${kpi.iconBg} p-2.5 rounded-xl border group-hover:scale-110 transition-transform duration-300`}>
-              <kpi.icon className="h-4 w-4" />
+        <AnimatedReveal key={i} delay={0.1 + (i * 0.05)}>
+          <div 
+            className={`relative rounded-2xl p-5 border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden ${kpi.bgClass || 'bg-white border-slate-200'}`}
+          >
+            {/* Subtle Accent Glow */}
+            {!kpi.darkTheme && (
+              <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 ${kpi.accent} pointer-events-none`} />
+            )}
+            
+            <div className="flex items-center gap-3 mb-4">
+              <motion.div 
+                className={`${kpi.iconBg} p-2.5 rounded-xl border group-hover:scale-110 transition-transform duration-300`}
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ 
+                  delay: 0.15 + (i * 0.05), 
+                  duration: 0.6,
+                  ease: ANIMATION_EASING
+                }}
+              >
+                <kpi.icon className="h-4 w-4" />
+              </motion.div>
+              <AnimatedText delay={0.2 + (i * 0.05)}>
+                <p className={`text-[10px] font-bold uppercase tracking-widest ${kpi.darkTheme ? 'text-primary-200' : 'text-slate-500'} leading-tight`}>
+                  {kpi.title}
+                </p>
+              </AnimatedText>
             </div>
-            <p className={`text-[10px] font-bold uppercase tracking-widest ${kpi.darkTheme ? 'text-primary-200' : 'text-slate-500'} leading-tight`}>
-              {kpi.title}
-            </p>
+            
+            <div className="space-y-1 relative z-10">
+              <AnimatedText delay={0.25 + (i * 0.05)}>
+                <p className={`text-3xl font-black tracking-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}>
+                  {kpi.value}
+                </p>
+              </AnimatedText>
+              <AnimatedText delay={0.3 + (i * 0.05)}>
+                <p className={`text-[11px] font-bold uppercase tracking-wider ${kpi.darkTheme ? 'text-primary-300' : 'text-slate-400'}`}>
+                  {kpi.subtitle}
+                </p>
+              </AnimatedText>
+            </div>
           </div>
-          
-          <div className="space-y-1 relative z-10">
-            <p className={`text-3xl font-black tracking-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}>
-              {kpi.value}
-            </p>
-            <p className={`text-[11px] font-bold uppercase tracking-wider ${kpi.darkTheme ? 'text-primary-300' : 'text-slate-400'}`}>
-              {kpi.subtitle}
-            </p>
-          </div>
-        </div>
+        </AnimatedReveal>
       ))}
     </div>
   );

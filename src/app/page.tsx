@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useSWR, { SWRConfig } from "swr";
+import { exportDashboardToPDF } from "@/components/pdf/exportPDF";
 import { KPICards } from "@/components/dashboard/KPICards";
 import { HeatmapChart } from "@/components/dashboard/HeatmapChart";
 import { VelocityChart } from "@/components/dashboard/VelocityChart";
@@ -14,11 +15,16 @@ import { FlaggedCategoryChart } from "@/components/dashboard/FlaggedCategoryChar
 import { ThreatRadarChart } from "@/components/dashboard/ThreatRadarChart";
 import { SimulationAlerts } from "@/components/dashboard/SimulationAlerts";
 import { AIChat } from "@/components/ai/AIChat";
-import { Shield, Sparkles, TrendingUp, Zap, Play, Square, RotateCcw } from "lucide-react";
+import { Shield, Sparkles, TrendingUp, Zap, Play, Square, RotateCcw, Download } from "lucide-react";
+import { AnimatedText } from "@/components/ui/AnimatedReveal";
 
 export default function Dashboard() {
   const [isSimulating, setIsSimulating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const { data: stats } = useSWR("/api/stats");
+  const { data: cityStats } = useSWR("/api/cities");
+  const { data: merchantStats } = useSWR("/api/merchant");
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   const toggleSimulation = async () => {
     const newState = !isSimulating;
@@ -38,12 +44,30 @@ export default function Dashboard() {
     window.location.reload(); // Hard refresh to reset all UI states instantly
   };
 
+  const exportPDF = async () => {
+    if (!stats) return;
+    try {
+      setIsExporting(true);
+      
+      // Give it a tiny moment to ensure any pending renders settle
+      await new Promise(r => setTimeout(r, 100));
+
+      await exportDashboardToPDF(stats, cityStats, merchantStats, {
+        includeCharts: true,
+      });
+    } catch (err) {
+      console.error('Failed to export PDF:', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <SWRConfig value={{ 
       refreshInterval: isSimulating ? 1500 : 0,
       fetcher: (url: string) => fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`).then(res => res.json())
     }}>
-      <div className="min-h-screen bg-slate-50 relative pb-20">
+      <div className="min-h-screen bg-slate-50 relative pb-20" ref={dashboardRef}>
         {/* Subtle Grid Pattern */}
         <div className="fixed inset-0 bg-[linear-gradient(to_right,#00000004_1px,transparent_1px),linear-gradient(to_bottom,#00000004_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
@@ -110,14 +134,14 @@ export default function Dashboard() {
                     <RotateCcw className="h-3.5 w-3.5" />
                   </button>
 
-                  <a 
-                    href="/api/onepager" 
-                    target="_blank"
-                    className="flex items-center gap-2 bg-slate-900 px-4 py-2 rounded-lg text-white font-semibold text-xs hover:bg-slate-800 transition-colors"
+                  <button 
+                    onClick={exportPDF}
+                    disabled={isExporting}
+                    className="flex items-center gap-2 bg-slate-900 px-4 py-2 rounded-lg text-white font-semibold text-xs hover:bg-slate-800 transition-colors disabled:opacity-50"
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Export Data
-                  </a>
+                    <Download className="h-3.5 w-3.5" />
+                    {isExporting ? 'Exporting...' : 'Export PDF'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -127,7 +151,9 @@ export default function Dashboard() {
           <main className="mx-auto px-4 py-4">
             {/* Hero KPI Section */}
             <section className="mb-4">
-              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Core Analytics</h2>
+              <AnimatedText delay={0.05}>
+                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Core Analytics</h2>
+              </AnimatedText>
               <KPICards />
             </section>
 
@@ -145,7 +171,9 @@ export default function Dashboard() {
 
                 {/* Risk Section */}
                 <section className="mt-2">
-                  <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Risk Intelligence</h2>
+                  <AnimatedText delay={0.75}>
+                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Risk Intelligence</h2>
+                  </AnimatedText>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FalsePositiveChart />
                     <ImpossibleTravelFeed />
@@ -154,7 +182,9 @@ export default function Dashboard() {
 
                 {/* Threat Intelligence Section */}
                 <section className="mt-2">
-                  <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Threat Intelligence</h2>
+                  <AnimatedText delay={0.95}>
+                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Threat Intelligence</h2>
+                  </AnimatedText>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ThreatRadarChart />
                     <FlaggedCategoryChart />

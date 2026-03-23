@@ -3,6 +3,8 @@
 import useSWR from "swr";
 import { useState } from "react";
 import { Clock, ShieldAlert, MapPin, Store, UserX } from "lucide-react";
+import { AnimatedReveal, AnimatedText, ANIMATION_EASING } from "@/components/ui/AnimatedReveal";
+import { motion } from "framer-motion";
 
 
 interface Alert {
@@ -34,41 +36,67 @@ export function LiveFeed() {
   const visibleData = data.filter((tx) => !dismissed.has(tx.transactionId));
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-full flex flex-col">
-      {/* Header */}
-      <div className="p-5 border-b border-slate-100 bg-slate-50/30">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="bg-slate-100 p-2 rounded-xl text-primary-600">
-                <ShieldAlert className="h-5 w-5" />
+    <AnimatedReveal delay={1.1}>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-full flex flex-col">
+        {/* Header */}
+        <div className="p-5 border-b border-slate-100 bg-slate-50/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <motion.div 
+                  className="bg-slate-100 p-2 rounded-xl text-primary-600"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ 
+                    delay: 1.2, 
+                    duration: 0.6,
+                    ease: ANIMATION_EASING
+                  }}
+                >
+                  <ShieldAlert className="h-5 w-5" />
+                </motion.div>
               </div>
+              <AnimatedText delay={1.25}>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Live Alerts</h3>
+                  <p className="text-xs text-slate-400 font-medium">Real-time risk monitoring</p>
+                </div>
+              </AnimatedText>
             </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Live Alerts</h3>
-              <p className="text-xs text-slate-400 font-medium">Real-time risk monitoring</p>
-            </div>
-          </div>
-          
-          <div className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-200 uppercase tracking-widest">
-            {visibleData.length} ACTIVE
+            
+            <AnimatedText delay={1.3}>
+              <div className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-200 uppercase tracking-widest">
+                {visibleData.length} ACTIVE
+              </div>
+            </AnimatedText>
           </div>
         </div>
-      </div>
 
-      {/* Feed List */}
-      <div className="flex-1 overflow-y-auto">
-        {visibleData.slice(0, 15).map((tx, i) => {
-          const isFrozen = frozenUsers.has(tx.userId);
-          
-          return (
-            <div 
-              key={tx.transactionId || i}
-              className={`
-                p-4 border-b last:border-b-0 border-slate-50 transition-all group
-                ${isFrozen ? 'bg-primary-50/30 font-medium' : 'hover:bg-slate-50'}
-              `}
-            >
+        {/* Feed List */}
+        <motion.div 
+          className="flex-1 overflow-y-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.35, duration: 0.5 }}
+        >
+          {visibleData.slice(0, 15).map((tx, i) => {
+            const isFrozen = frozenUsers.has(tx.userId);
+            
+            return (
+              <motion.div 
+                key={tx.transactionId || i}
+                className={`
+                  p-4 border-b last:border-b-0 border-slate-50 transition-all group
+                  ${isFrozen ? 'bg-primary-50/30 font-medium' : 'hover:bg-slate-50'}
+                `}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  delay: 1.4 + (i * 0.03),
+                  duration: 0.5,
+                  ease: ANIMATION_EASING
+                }}
+              >
               <div className="flex items-start gap-4">
                 {/* Status Indicator */}
                 <div className="mt-1 flex flex-col items-center">
@@ -133,10 +161,11 @@ export function LiveFeed() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
+    </AnimatedReveal>
   );
 }

@@ -2,6 +2,8 @@
 
 import useSWR from "swr";
 import { Plane, UserX, Clock, ArrowRight, AlertTriangle } from "lucide-react";
+import { AnimatedReveal, AnimatedText, ANIMATION_EASING } from "@/components/ui/AnimatedReveal";
+import { motion } from "framer-motion";
 
 
 export function ImpossibleTravelFeed() {
@@ -12,29 +14,58 @@ export function ImpossibleTravelFeed() {
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-[400px] flex flex-col">
-      {/* Header */}
-      <div className="p-5 border-b border-stone-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-violet-500 to-purple-600 p-2.5 rounded-2xl">
-              <Plane className="h-5 w-5 text-white" />
+    <AnimatedReveal delay={0.85}>
+      <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-[400px] flex flex-col">
+        {/* Header */}
+        <div className="p-5 border-b border-stone-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <motion.div 
+                className="bg-gradient-to-br from-violet-500 to-purple-600 p-2.5 rounded-2xl"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ 
+                  delay: 0.95, 
+                  duration: 0.6,
+                  ease: ANIMATION_EASING
+                }}
+              >
+                <Plane className="h-5 w-5 text-white" />
+              </motion.div>
+              <AnimatedText delay={1.0}>
+                <div>
+                  <h3 className="text-base font-bold text-stone-900">Impossible Travel</h3>
+                  <p className="text-xs text-stone-500">Velocity anomalies (&lt;60 min between cities)</p>
+                </div>
+              </AnimatedText>
             </div>
-            <div>
-              <h3 className="text-base font-bold text-stone-900">Impossible Travel</h3>
-              <p className="text-xs text-stone-500">Velocity anomalies (&lt;60 min between cities)</p>
-            </div>
-          </div>
-          <div className="bg-violet-50 text-violet-700 px-3 py-1.5 rounded-full text-xs font-bold border border-violet-200">
-            {data.length} Cases
+            <AnimatedText delay={1.05}>
+              <div className="bg-violet-50 text-violet-700 px-3 py-1.5 rounded-full text-xs font-bold border border-violet-200">
+                {data.length} Cases
+              </div>
+            </AnimatedText>
           </div>
         </div>
-      </div>
 
-      {/* List */}
-      <div className="flex-1 overflow-y-auto">
-        {data.filter((c: any) => c?.tx1 && c?.tx2).slice(0, 10).map((caseData: any, i: number) => (
-          <div key={i} className="p-4 border-b border-stone-100 hover:bg-stone-50 transition-colors">
+        {/* List */}
+        <motion.div 
+          className="flex-1 overflow-y-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1, duration: 0.5 }}
+        >
+          {data.filter((c: any) => c?.tx1 && c?.tx2).slice(0, 10).map((caseData: any, i: number) => (
+            <motion.div 
+              key={i} 
+              className="p-4 border-b border-stone-100 hover:bg-stone-50 transition-colors"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                delay: 1.15 + (i * 0.03),
+                duration: 0.5,
+                ease: ANIMATION_EASING
+              }}
+            >
             <div className="flex items-start gap-3">
               <div className="bg-violet-100 p-2 rounded-xl">
                 <AlertTriangle className="h-4 w-4 text-violet-600" />
@@ -74,10 +105,11 @@ export function ImpossibleTravelFeed() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
+    </AnimatedReveal>
   );
 }
 

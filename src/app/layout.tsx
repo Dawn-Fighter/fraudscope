@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import { BeforeUnloadHandler } from "@/components/BeforeUnloadHandler";
 
 const outfit = Outfit({ 
   subsets: ["latin"],
@@ -21,15 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={outfit.variable}>
       <head>
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            window.addEventListener('beforeunload', function() {
-              navigator.sendBeacon('/api/simulate/reset');
-            });
-          `
-        }} />
       </head>
       <body className="font-outfit antialiased selection:bg-primary-100 selection:text-primary-900">
+        <BeforeUnloadHandler />
         {children}
       </body>
     </html>

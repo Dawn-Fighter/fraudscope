@@ -2,6 +2,8 @@
 
 import useSWR from "swr";
 import { Activity } from "lucide-react";
+import { AnimatedReveal, AnimatedText, ANIMATION_EASING } from "@/components/ui/AnimatedReveal";
+import { motion } from "framer-motion";
 
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -54,71 +56,107 @@ export function HeatmapChart() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-auto flex flex-col">
-      {/* Header */}
-      <div className="p-6 border-b border-slate-100">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="bg-slate-100 p-2 rounded-xl text-primary-600">
-              <Activity className="h-5 w-5" />
+    <AnimatedReveal delay={0.5}>
+      <div data-chart="heatmap" className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-auto flex flex-col">
+        {/* Header */}
+        <div className="p-6 border-b border-slate-100">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <motion.div 
+                className="bg-slate-100 p-2 rounded-xl text-primary-600"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ 
+                  delay: 0.6, 
+                  duration: 0.6,
+                  ease: ANIMATION_EASING
+                }}
+              >
+                <Activity className="h-5 w-5" />
+              </motion.div>
+              <AnimatedText delay={0.65}>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Fraud Heatmap</h3>
+                  <p className="text-xs text-slate-400 font-medium">7-day × 24-hour incident density</p>
+                </div>
+              </AnimatedText>
             </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Fraud Heatmap</h3>
-              <p className="text-xs text-slate-400 font-medium">7-day × 24-hour incident density</p>
-            </div>
-          </div>
-          
-          {/* Legend */}
-          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-            <span className="text-[10px] font-bold text-slate-400">LOW</span>
-            <div className="flex gap-0.5">
-              <div className="w-3 h-3 rounded-sm bg-slate-200" />
-              <div className="w-3 h-3 rounded-sm bg-primary-200" />
-              <div className="w-3 h-3 rounded-sm bg-primary-400" />
-              <div className="w-3 h-3 rounded-sm bg-primary-600" />
-            </div>
-            <span className="text-[10px] font-bold text-slate-400">HIGH</span>
+            
+            {/* Legend */}
+            <AnimatedReveal delay={0.7}>
+              <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                <span className="text-[10px] font-bold text-slate-400">LOW</span>
+                <div className="flex gap-0.5">
+                  {[0, 1, 2, 3].map((i) => (
+                    <motion.div
+                      key={i}
+                      className={`w-3 h-3 rounded-sm ${i === 0 ? 'bg-slate-200' : i === 1 ? 'bg-primary-200' : i === 2 ? 'bg-primary-400' : 'bg-primary-600'}`}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        delay: 0.75 + (i * 0.05),
+                        duration: 0.4,
+                        ease: ANIMATION_EASING
+                      }}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] font-bold text-slate-400">HIGH</span>
+              </div>
+            </AnimatedReveal>
           </div>
         </div>
-      </div>
 
-      {/* Heatmap Grid */}
-      <div className="p-6 overflow-x-auto overflow-y-hidden flex-1">
-        <div className="min-w-[800px]">
-          {/* Hour Labels - Aligned with the 24 columns */}
-          <div className="flex mb-4 pl-12">
-            <div className="flex-1 flex justify-between">
-              {[0, 6, 12, 18, 23].map((h) => (
-                <div key={h} className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center" style={{ width: `${(1/24)*100}%`, marginLeft: h === 0 ? 0 : `${(h - [0, 6, 12, 18, 23][[0, 6, 12, 18, 23].indexOf(h)-1] - 1)/24 * 100}%` }}>
-                  {h === 0 ? '12am' : h === 12 ? '12pm' : h > 12 ? `${h-12}pm` : `${h}am`}
+        {/* Heatmap Grid */}
+        <motion.div 
+          className="p-6 overflow-x-auto overflow-y-hidden flex-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+        >
+          <div className="min-w-[800px]">
+            {/* Hour Labels - Aligned with the 24 columns */}
+            <div className="flex mb-4 pl-12">
+              <div className="flex-1 flex justify-between">
+                {[0, 6, 12, 18, 23].map((h) => (
+                  <div key={h} className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center" style={{ width: `${(1/24)*100}%`, marginLeft: h === 0 ? 0 : `${(h - [0, 6, 12, 18, 23][[0, 6, 12, 18, 23].indexOf(h)-1] - 1)/24 * 100}%` }}>
+                    {h === 0 ? '12am' : h === 12 ? '12pm' : h > 12 ? `${h-12}pm` : `${h}am`}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Grid Rows */}
+            <div className="flex flex-col gap-1.5">
+              {DAYS.map((day, dIdx) => (
+                <div key={day} className="flex items-center gap-4">
+                  <div className="w-8 text-[10px] font-bold text-slate-400 text-right uppercase tracking-wider">{day}</div>
+                  <div className="flex-1 flex gap-1">
+                    {heatmapData[dIdx].map((val: number, hIdx: number) => (
+                      <motion.div
+                        key={hIdx}
+                        title={`${day} ${hIdx}:00 — ${val} flagged`}
+                        className={`
+                          flex-1 aspect-square rounded-sm transition-all duration-200
+                          hover:scale-110 hover:z-10 cursor-pointer
+                          ${getColor(val)}
+                        `}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                          delay: 0.85 + (dIdx * 0.05) + (hIdx * 0.002),
+                          duration: 0.4,
+                          ease: ANIMATION_EASING
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Grid Rows */}
-          <div className="flex flex-col gap-1.5">
-            {DAYS.map((day, dIdx) => (
-              <div key={day} className="flex items-center gap-4">
-                <div className="w-8 text-[10px] font-bold text-slate-400 text-right uppercase tracking-wider">{day}</div>
-                <div className="flex-1 flex gap-1">
-                  {heatmapData[dIdx].map((val: number, hIdx: number) => (
-                    <div
-                      key={hIdx}
-                      title={`${day} ${hIdx}:00 — ${val} flagged`}
-                      className={`
-                        flex-1 aspect-square rounded-sm transition-all duration-200
-                        hover:scale-110 hover:z-10 cursor-pointer
-                        ${getColor(val)}
-                      `}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </AnimatedReveal>
   );
 }
