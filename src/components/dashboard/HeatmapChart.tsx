@@ -45,71 +45,71 @@ export function HeatmapChart() {
   }
 
   const getColor = (val: number) => {
-    if (val === 0) return "bg-stone-100";
+    if (val === 0) return "bg-slate-100";
     const intensity = val / maxVal;
-    if (intensity < 0.2) return "bg-coral-100";
-    if (intensity < 0.4) return "bg-coral-200";
-    if (intensity < 0.6) return "bg-coral-300";
-    if (intensity < 0.8) return "bg-coral-400";
-    return "bg-coral-500 shadow-glow-coral";
+    if (intensity < 0.2) return "bg-primary-100";
+    if (intensity < 0.4) return "bg-primary-200";
+    if (intensity < 0.6) return "bg-primary-300";
+    if (intensity < 0.8) return "bg-primary-400";
+    return "bg-primary-600 shadow-glow-primary";
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[450px] flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-stone-100">
-        <div className="flex justify-between items-start">
+      <div className="p-6 border-b border-slate-100">
+        <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-coral-500 to-pink-500 p-2.5 rounded-2xl">
-              <Activity className="h-5 w-5 text-white" />
+            <div className="bg-slate-100 p-2 rounded-xl text-primary-600">
+              <Activity className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-stone-900">Fraud Heatmap</h3>
-              <p className="text-sm text-stone-500">7-day × 24-hour pattern analysis</p>
+              <h3 className="text-base font-bold text-slate-900">Fraud Heatmap</h3>
+              <p className="text-xs text-slate-400 font-medium">7-day × 24-hour incident density</p>
             </div>
           </div>
           
           {/* Legend */}
-          <div className="flex items-center gap-2 bg-stone-50 px-4 py-2 rounded-full">
-            <span className="text-xs font-semibold text-stone-500">Low</span>
-            <div className="flex gap-1">
-              <div className="w-4 h-4 rounded-md bg-stone-100" />
-              <div className="w-4 h-4 rounded-md bg-coral-200" />
-              <div className="w-4 h-4 rounded-md bg-coral-400" />
-              <div className="w-4 h-4 rounded-md bg-coral-500" />
+          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+            <span className="text-[10px] font-bold text-slate-400">LOW</span>
+            <div className="flex gap-0.5">
+              <div className="w-3 h-3 rounded-sm bg-slate-200" />
+              <div className="w-3 h-3 rounded-sm bg-primary-200" />
+              <div className="w-3 h-3 rounded-sm bg-primary-400" />
+              <div className="w-3 h-3 rounded-sm bg-primary-600" />
             </div>
-            <span className="text-xs font-semibold text-stone-500">High</span>
+            <span className="text-[10px] font-bold text-slate-400">HIGH</span>
           </div>
         </div>
       </div>
 
       {/* Heatmap Grid */}
-      <div className="p-6 overflow-x-auto">
-        <div className="min-w-[700px]">
-          {/* Hour Labels */}
-          <div className="flex mb-3 pl-14">
-            <div className="flex-1 flex justify-between text-[10px] font-bold text-stone-400 uppercase tracking-wider">
-              <span>12am</span>
-              <span>6am</span>
-              <span>12pm</span>
-              <span>6pm</span>
-              <span>11pm</span>
+      <div className="p-6 overflow-auto flex-1">
+        <div className="min-w-[800px]">
+          {/* Hour Labels - Aligned with the 24 columns */}
+          <div className="flex mb-4 pl-12">
+            <div className="flex-1 flex justify-between">
+              {[0, 6, 12, 18, 23].map((h) => (
+                <div key={h} className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center" style={{ width: `${(1/24)*100}%`, marginLeft: h === 0 ? 0 : `${(h - [0, 6, 12, 18, 23][[0, 6, 12, 18, 23].indexOf(h)-1] - 1)/24 * 100}%` }}>
+                  {h === 0 ? '12am' : h === 12 ? '12pm' : h > 12 ? `${h-12}pm` : `${h}am`}
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Grid Rows */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
             {DAYS.map((day, dIdx) => (
-              <div key={day} className="flex items-center gap-3">
-                <div className="w-10 text-xs font-bold text-stone-500 text-right">{day}</div>
-                <div className="flex-1 flex gap-1.5">
+              <div key={day} className="flex items-center gap-4">
+                <div className="w-8 text-[10px] font-bold text-slate-400 text-right uppercase tracking-wider">{day}</div>
+                <div className="flex-1 flex gap-1">
                   {heatmapData[dIdx].map((val: number, hIdx: number) => (
                     <div
                       key={hIdx}
                       title={`${day} ${hIdx}:00 — ${val} flagged`}
                       className={`
-                        flex-1 aspect-[1.5/1] rounded-lg transition-all duration-200
-                        hover:scale-125 hover:z-10 cursor-pointer
+                        flex-1 aspect-square rounded-sm transition-all duration-200
+                        hover:scale-110 hover:z-10 cursor-pointer
                         ${getColor(val)}
                       `}
                     />

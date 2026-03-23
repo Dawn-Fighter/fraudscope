@@ -17,23 +17,30 @@ export function loadTransactions(): Transaction[] {
   if (cachedData) return cachedData;
 
   const csvPath = path.join(process.cwd(), 'data', 'FinTech_Fraud_Logs.csv');
+  if (!fs.existsSync(csvPath)) {
+    console.error('CSV not found at:', csvPath);
+    return [];
+  }
+
   const raw = fs.readFileSync(csvPath, 'utf-8');
-  const lines = raw.trim().split('\n');
+  const lines = raw.split(/\r?\n/);
 
-  cachedData = lines.slice(1).map(line => {
-    const values = line.split(',');
-    return {
-      Transaction_ID: values[0],
-      User_ID: values[1],
-      Timestamp: values[2],
-      Amount_USD: parseFloat(values[3]),
-      Merchant_Category: values[4],
-      Location_City: values[5],
-      Status: values[6] as 'Approved' | 'Flagged',
-    };
-  });
+  cachedData = lines.slice(1)
+    .filter(line => line.trim() !== '')
+    .map(line => {
+      const values = line.split(',').map(v => v.trim());
+      return {
+        Transaction_ID: values[0] || 'N/A',
+        User_ID: values[1] || 'N/A',
+        Timestamp: values[2] || new Date().toISOString(),
+        Amount_USD: parseFloat(values[3] || '0'),
+        Merchant_Category: values[4] || 'Other',
+        Location_City: values[5] || 'Unknown',
+        Status: (values[6] === 'Flagged' ? 'Flagged' : 'Approved') as 'Approved' | 'Flagged',
+      };
+    });
 
-  return cachedData;
+  return cachedData || [];
 }
 
 // Stats API
@@ -41,6 +48,21 @@ export function getStats() {
   const transactions = loadTransactions();
   const flagged = transactions.filter(tx => tx.Status === 'Flagged');
   
+  // Weekend patterns
+  const weekendFraud = flagged.filter(t => {
+    const day = new Date(t.Timestamp).getDay();
+    return day === 0 || day === 6;
+  }).length;
+  const weekendFraudPercent = flagged.length > 0 ? parseFloat(((weekendFraud / flagged.length) * 100).toFixed(1)) : 0;
+
+  // Peak Hour
+  const hourCounts: Record<number, number> = {};
+  flagged.forEach(t => {
+    const hour = new Date(t.Timestamp).getHours();
+    hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+  });
+  const peakFraudHour = Object.entries(hourCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "0";
+
   const userFlags = new Map<string, number>();
   for (const tx of flagged) {
     userFlags.set(tx.User_ID, (userFlags.get(tx.User_ID) || 0) + 1);
@@ -50,31 +72,17 @@ export function getStats() {
   const merchantStats = getMerchantStats();
   const highestRisk = merchantStats[0];
 
-  // Detect impossible travel (same user, different city, < 60 min apart)
-  const sortedByUser = [...transactions].sort((a, b) => {
-    if (a.User_ID !== b.User_ID) return a.User_ID.localeCompare(b.User_ID);
-    return new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime();
-  });
-
-  let impossibleTravel = 0;
-  for (let i = 1; i < sortedByUser.length; i++) {
-    const prev = sortedByUser[i - 1];
-    const curr = sortedByUser[i];
-    if (prev.User_ID === curr.User_ID && prev.Location_City !== curr.Location_City) {
-      const timeDiff = (new Date(curr.Timestamp).getTime() - new Date(prev.Timestamp).getTime()) / 60000;
-      if (timeDiff > 0 && timeDiff < 60) {
-        impossibleTravel++;
-      }
-    }
-  }
+  const travelCases = getImpossibleTravel();
 
   return {
     totalTransactions: transactions.length,
     flaggedTransactions: flagged.length,
-    impossibleTravel,
+    impossibleTravel: travelCases.length,
     velocitySpikeUsers,
-    fraudRate: parseFloat(((flagged.length / transactions.length) * 100).toFixed(2)),
+    fraudRate: parseFloat(((flagged.length / transactions.length) * 100).toFixed(3)),
     highestRiskCategory: `${highestRisk?.name || 'N/A'} (${highestRisk?.fraudRate || 0}%)`,
+    weekendFraudPercent,
+    peakFraudHour: parseInt(peakFraudHour),
   };
 }
 
@@ -105,7 +113,7 @@ export function getCityStats() {
       fraudAmount: Math.round(stats.flaggedAmount),
       totalAmount: Math.round(stats.amount),
       rate: parseFloat(((stats.flagged / stats.total) * 100).toFixed(2)),
-      trend: 0, // Mock calculation removed
+      trend: 0,
     }))
     .sort((a, b) => b.fraudAmount - a.fraudAmount);
 }
@@ -141,7 +149,7 @@ export function getMerchantStats() {
     .sort((a, b) => b.fraudRate - a.fraudRate);
 }
 
-// Heatmap API - fraud by day/hour
+// Heatmap API
 export function getHeatmapData() {
   const transactions = loadTransactions();
   const heatmap = new Map<string, number>();
@@ -161,12 +169,12 @@ export function getHeatmapData() {
       day,
       hour,
       count: heatmap.get(`${day}-${hour}`) || 0,
-      rate: 0, // Will be calculated if needed
+      rate: 0,
     }))
   );
 }
 
-// Feed API - recent flagged transactions
+// Feed API
 export function getRecentFlagged(limit = 20) {
   const transactions = loadTransactions();
   return transactions
@@ -174,16 +182,16 @@ export function getRecentFlagged(limit = 20) {
     .sort((a, b) => new Date(b.Timestamp).getTime() - new Date(a.Timestamp).getTime())
     .slice(0, limit)
     .map(tx => ({
-      id: tx.Transaction_ID,
-      user: tx.User_ID,
+      transactionId: tx.Transaction_ID,
+      userId: tx.User_ID,
       amount: tx.Amount_USD,
       city: tx.Location_City,
-      merchant: tx.Merchant_Category,
+      category: tx.Merchant_Category,
       timestamp: tx.Timestamp,
     }));
 }
 
-// Repeat Offenders API
+// Repeat Offenders
 export function getRepeatOffenders(limit = 12) {
   const transactions = loadTransactions();
   const userStats = new Map<string, { flags: number; amount: number; txCount: number }>();
@@ -212,7 +220,7 @@ export function getRepeatOffenders(limit = 12) {
     .slice(0, limit);
 }
 
-// Velocity API - transaction volume by hour
+// Velocity API
 export function getVelocityData() {
   const transactions = loadTransactions();
   const hourlyData = new Map<number, { volume: number; spikes: number }>();
@@ -238,36 +246,23 @@ export function getVelocityData() {
   }));
 }
 
-// Impossible Travel API
+// Impossible Travel
 export function getImpossibleTravel(limit = 20) {
   const transactions = loadTransactions();
-  
-  // Group by user and sort by timestamp
   const userTx = new Map<string, Transaction[]>();
   for (const tx of transactions) {
-    if (!userTx.has(tx.User_ID)) {
-      userTx.set(tx.User_ID, []);
-    }
+    if (!userTx.has(tx.User_ID)) userTx.set(tx.User_ID, []);
     userTx.get(tx.User_ID)!.push(tx);
   }
 
-  const travelCases: Array<{
-    userId: string;
-    tx1: { city: string; timestamp: string; amount: number };
-    tx2: { city: string; timestamp: string; amount: number };
-    timeDiffMinutes: number;
-  }> = [];
-
+  const travelCases: any[] = [];
   for (const [userId, txs] of userTx.entries()) {
     const sorted = txs.sort((a, b) => new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime());
-    
     for (let i = 1; i < sorted.length; i++) {
       const prev = sorted[i - 1];
       const curr = sorted[i];
-      
       if (prev.Location_City !== curr.Location_City) {
         const timeDiff = (new Date(curr.Timestamp).getTime() - new Date(prev.Timestamp).getTime()) / 60000;
-        
         if (timeDiff > 0 && timeDiff < 60) {
           travelCases.push({
             userId,
@@ -280,16 +275,13 @@ export function getImpossibleTravel(limit = 20) {
     }
   }
 
-  return travelCases
-    .sort((a, b) => a.timeDiffMinutes - b.timeDiffMinutes)
-    .slice(0, limit);
+  return travelCases.sort((a, b) => a.timeDiffMinutes - b.timeDiffMinutes).slice(0, limit);
 }
 
-// Threshold API - transactions above/below $500
+// Threshold API
 export function getThresholdData() {
   const transactions = loadTransactions();
   const threshold = 500;
-
   const below = { count: 0, flagged: 0, amount: 0 };
   const above = { count: 0, flagged: 0, amount: 0 };
 
@@ -312,15 +304,12 @@ export function getThresholdData() {
   };
 }
 
-// City Pairs API - for network graph
+// City Pairs
 export function getCityPairs() {
   const transactions = loadTransactions();
-  
   const userTx = new Map<string, Transaction[]>();
   for (const tx of transactions) {
-    if (!userTx.has(tx.User_ID)) {
-      userTx.set(tx.User_ID, []);
-    }
+    if (!userTx.has(tx.User_ID)) userTx.set(tx.User_ID, []);
     userTx.get(tx.User_ID)!.push(tx);
   }
 
@@ -329,11 +318,9 @@ export function getCityPairs() {
 
   for (const txs of userTx.values()) {
     const sorted = txs.sort((a, b) => new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime());
-    
     for (let i = 1; i < sorted.length; i++) {
       const prev = sorted[i - 1];
       const curr = sorted[i];
-      
       if (prev.Location_City !== curr.Location_City) {
         const pair = [prev.Location_City, curr.Location_City].sort().join('->');
         pairCounts.set(pair, (pairCounts.get(pair) || 0) + 1);
@@ -344,7 +331,6 @@ export function getCityPairs() {
   }
 
   const nodes = Array.from(cities).map((id, index) => ({ id, group: index % 3 }));
-  
   const links = Array.from(pairCounts.entries())
     .map(([pair, value]) => {
       const [source, target] = pair.split('->');
@@ -356,29 +342,42 @@ export function getCityPairs() {
   return { nodes, links };
 }
 
-// All transactions for table/export
+// All transactions
 export function getAllTransactions(page = 1, pageSize = 50, filters?: { status?: string; city?: string; merchant?: string }) {
   let transactions = loadTransactions();
-
-  if (filters?.status) {
-    transactions = transactions.filter(tx => tx.Status === filters.status);
-  }
-  if (filters?.city) {
-    transactions = transactions.filter(tx => tx.Location_City === filters.city);
-  }
-  if (filters?.merchant) {
-    transactions = transactions.filter(tx => tx.Merchant_Category === filters.merchant);
-  }
+  if (filters?.status) transactions = transactions.filter(tx => tx.Status === filters.status);
+  if (filters?.city) transactions = transactions.filter(tx => tx.Location_City === filters.city);
+  if (filters?.merchant) transactions = transactions.filter(tx => tx.Merchant_Category === filters.merchant);
 
   const total = transactions.length;
   const sorted = transactions.sort((a, b) => new Date(b.Timestamp).getTime() - new Date(a.Timestamp).getTime());
   const paginated = sorted.slice((page - 1) * pageSize, page * pageSize);
 
+  return { data: paginated, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
+}
+
+export function getData() {
+  const stats = getStats();
   return {
-    data: paginated,
-    total,
-    page,
-    pageSize,
-    totalPages: Math.ceil(total / pageSize),
+    stats: { ...stats, flaggedCount: stats.flaggedTransactions },
+    merchantFraud: getMerchantStats().map(m => ({ ...m, total: m.value, fraud: m.flagged, rate: m.fraudRate })),
+    cityFraud: getCityStats().map(c => ({ ...c, total: c.transactions, fraud: c.flagged })),
+    repeatOffenders: getRepeatOffenders().map(o => ({ ...o, flagCount: o.flags })),
+    impossibleTravel: getImpossibleTravel().map(t => ({ ...t, flagCount: 1 })),
   };
+}
+
+export function getInsights() {
+  const merchantStats = getMerchantStats();
+  const offenders = getRepeatOffenders();
+  const topOffender = offenders[0];
+  const highRiskCat = merchantStats[0];
+
+  const analysis = [
+    topOffender ? `CRITICAL: User ${topOffender.userId} flagged ${topOffender.flags} times ($${topOffender.totalAmount.toLocaleString()})` : null,
+    highRiskCat ? `PATTERN: ${highRiskCat.name} is the highest risk category with a ${highRiskCat.fraudRate}% fraud rate.` : null,
+    `RECOMMENDATION: Apply strict multi-factor authentication for all transactions exceeding $500 in ${getCityStats()[0]?.city || 'high-risk urban centers'}.`
+  ].filter(Boolean).join('\n\n');
+
+  return { insight: analysis };
 }

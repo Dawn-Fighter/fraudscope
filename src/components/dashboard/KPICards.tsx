@@ -9,9 +9,9 @@ export function KPICards() {
   const { data, isLoading } = useSWR("/api/stats", fetcher);
 
   if (isLoading || !data) return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
       {[...Array(6)].map((_, i) => (
-        <div key={i} className="bg-white/60 backdrop-blur rounded-3xl h-[140px] animate-pulse border border-stone-200/50" />
+        <div key={i} className="bg-white/60 backdrop-blur rounded-2xl h-[120px] animate-pulse border border-stone-200/50" />
       ))}
     </div>
   );
@@ -22,20 +22,18 @@ export function KPICards() {
       value: data.totalTransactions?.toLocaleString() || "0",
       icon: Activity,
       subtitle: "All processed",
-      gradient: "from-primary-500 to-primary-600",
-      iconBg: "bg-primary-100",
-      iconColor: "text-primary-600",
-      glow: "shadow-glow-primary",
+      accent: "bg-primary-600",
+      iconBg: "bg-slate-50",
+      iconColor: "text-slate-600",
     },
     {
       title: "Flagged Fraud",
       value: data.flaggedTransactions?.toLocaleString() || "0",
       icon: AlertTriangle,
       subtitle: `${data.fraudRate || 0}% rate`,
-      gradient: "from-coral-500 to-pink-500",
-      iconBg: "bg-coral-100",
-      iconColor: "text-coral-600",
-      glow: "shadow-glow-coral",
+      accent: "bg-error",
+      iconBg: "bg-red-50",
+      iconColor: "text-red-600",
       highlight: true,
     },
     {
@@ -43,71 +41,62 @@ export function KPICards() {
       value: data.impossibleTravel?.toLocaleString() || "0",
       icon: Plane,
       subtitle: "Velocity alerts",
-      gradient: "from-teal-500 to-teal-600",
-      iconBg: "bg-teal-100",
-      iconColor: "text-teal-600",
-      glow: "shadow-glow-teal",
+      accent: "bg-indigo-600",
+      iconBg: "bg-indigo-50",
+      iconColor: "text-indigo-600",
     },
     {
       title: "Top Risk Category",
       value: data.highestRiskCategory || "N/A",
       icon: TrendingUp,
-      subtitle: "Highest fraud rate",
-      gradient: "from-pink-500 to-rose-500",
-      iconBg: "bg-pink-100",
-      iconColor: "text-pink-600",
+      subtitle: `${data.topRiskCategory?.rate || 0}% rate`,
+      accent: "bg-slate-400",
+      iconBg: "bg-slate-50",
+      iconColor: "text-slate-600",
     },
     {
       title: "Velocity Spike Users",
       value: data.velocitySpikeUsers?.toLocaleString() || "0",
       icon: Clock,
-      subtitle: "Multiple flags",
-      gradient: "from-violet-500 to-purple-600",
-      iconBg: "bg-violet-100",
-      iconColor: "text-violet-600",
+      subtitle: "UTC window",
+      accent: "bg-slate-400",
+      iconBg: "bg-slate-50",
+      iconColor: "text-slate-600",
     },
     {
       title: "Fraud Rate",
       value: `${data.fraudRate || 0}%`,
       icon: CalendarDays,
-      subtitle: "Total incident rate",
-      gradient: "from-amber-500 to-orange-500",
-      iconBg: "bg-amber-100",
-      iconColor: "text-amber-600",
+      subtitle: "Weekly incidents",
+      accent: "bg-slate-400",
+      iconBg: "bg-slate-50",
+      iconColor: "text-slate-600",
     }
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 text-slate-900">
       {kpis.map((kpi, i) => (
         <div 
           key={i} 
-          className={`
-            relative overflow-hidden bg-white rounded-3xl p-5 border border-stone-200/50 
-            shadow-soft card-hover group
-            ${kpi.highlight ? kpi.glow : ''}
-          `}
+          className="relative bg-white rounded-xl p-3 border border-slate-200 shadow-soft hover:shadow-soft-lg transition-all group"
         >
-          {/* Gradient accent bar */}
-          <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${kpi.gradient}`} />
+          {/* Accent bar */}
+          <div className={`absolute top-0 left-0 right-0 h-1 ${kpi.accent} rounded-t-2xl`} />
           
-          {/* Content */}
-          <div className="flex items-start justify-between mb-3">
-            <div className={`${kpi.iconBg} p-2.5 rounded-2xl group-hover:scale-110 transition-transform`}>
-              <kpi.icon className={`h-5 w-5 ${kpi.iconColor}`} />
+          <div className="flex items-center gap-2 mb-2">
+            <div className={`${kpi.iconBg} p-2 rounded-lg border border-slate-100 group-hover:bg-white group-hover:scale-105 transition-all`}>
+              <kpi.icon className={`h-4 w-4 ${kpi.iconColor}`} />
             </div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{kpi.title}</p>
           </div>
           
-          <div className="space-y-1">
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide">{kpi.title}</p>
-            <p className={`text-2xl font-extrabold tracking-tight ${kpi.highlight ? 'gradient-text' : 'text-stone-900'}`}>
+          <div className="space-y-0.5">
+            <p className={`text-xl font-bold tracking-tight ${kpi.highlight ? 'text-error' : 'text-slate-900'}`}>
               {kpi.value}
             </p>
-            <p className="text-xs font-medium text-stone-400">{kpi.subtitle}</p>
+            <p className="text-[10px] font-medium text-slate-400">{kpi.subtitle}</p>
           </div>
-
-          {/* Decorative gradient blob */}
-          <div className={`absolute -bottom-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br ${kpi.gradient} opacity-10 blur-xl group-hover:opacity-20 transition-opacity`} />
         </div>
       ))}
     </div>

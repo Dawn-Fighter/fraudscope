@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import { Store } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -20,64 +21,63 @@ export function MerchantChart() {
   })).sort((a: any, b: any) => b.rate - a.rate);
 
   const getBarColor = (rate: number) => {
-    if (rate > 3) return "#F97316"; // coral
-    if (rate > 1) return "#EC4899"; // pink
-    return "#7C3AED"; // primary
+    if (rate > 3) return "#6366F1"; // Indigo primay
+    return "#94A3B8"; // Slate muted
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-full">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[380px] flex flex-col">
       {/* Header */}
-      <div className="p-5 border-b border-stone-100">
+      <div className="p-5 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-br from-primary-500 to-pink-500 p-2.5 rounded-2xl">
-            <Store className="h-5 w-5 text-white" />
+          <div className="bg-slate-100 p-2 rounded-xl text-primary-600">
+            <Store className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-stone-900">Category Risk</h3>
-            <p className="text-xs text-stone-500">Fraud rate by merchant type</p>
+            <h3 className="text-base font-bold text-slate-900">Category Risk</h3>
+            <p className="text-xs text-slate-400 font-medium">Fraud rate by merchant type</p>
           </div>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="p-5">
-        <div className="h-[240px] w-full">
+      <div className="p-5 flex-1 min-h-0">
+        <div className="h-full w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
+            <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: 10, bottom: 0 }}>
               <XAxis 
                 type="number" 
-                stroke="#A8A29E" 
+                stroke="#94A3B8" 
                 tickFormatter={(v) => `${v}%`} 
-                tick={{ fontSize: 11, fontWeight: 600 }} 
+                tick={{ fontSize: 10, fontWeight: 700 }} 
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis 
                 dataKey="name" 
                 type="category" 
-                stroke="#78716C" 
+                stroke="#64748B" 
                 width={85} 
-                tick={{ fontSize: 11, fontWeight: 600 }} 
+                tick={{ fontSize: 10, fontWeight: 700 }} 
                 axisLine={false} 
                 tickLine={false}
               />
               <Tooltip 
-                cursor={{ fill: '#FAFAF9', radius: 8 }}
+                cursor={{ fill: '#F8FAFC', radius: 4 }}
                 contentStyle={{ 
-                  backgroundColor: '#1C1917', 
+                  backgroundColor: '#0F172A', 
                   border: 'none',
                   borderRadius: '12px', 
                   color: '#fff',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                   padding: '12px 16px'
                 }}
-                formatter={(value: number) => [`${value}%`, 'Fraud Rate']}
-                labelStyle={{ color: '#A8A29E', marginBottom: '4px', fontSize: '11px' }}
+                formatter={(value: ValueType) => [`${value}%`, 'Fraud Rate']}
+                labelStyle={{ color: '#94A3B8', marginBottom: '4px', fontSize: '10px', fontWeight: 700 }}
               />
-              <Bar dataKey="rate" radius={[0, 8, 8, 0]} barSize={28}>
-                {chartData.map((entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={getBarColor(entry.rate)} />
+              <Bar dataKey="rate" radius={[0, 4, 4, 0]} barSize={24}>
+                {chartData.map((_entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={getBarColor(chartData[index].rate)} />
                 ))}
               </Bar>
             </BarChart>

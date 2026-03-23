@@ -19,7 +19,8 @@ export function AIChat() {
 
   useEffect(() => {
     if (insights && !isOpen) {
-      setHasNewAlert(true);
+      const timer = setTimeout(() => setHasNewAlert(true), 100);
+      return () => clearTimeout(timer);
     }
   }, [insights, isOpen]);
 
@@ -37,10 +38,10 @@ export function AIChat() {
         <AnimatePresence>
           {hasNewAlert && !isOpen && (
             <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.9 }}
-              className="bg-white p-4 rounded-2xl shadow-soft-lg border border-stone-200 max-w-xs cursor-pointer"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="absolute bottom-0 right-20 bg-white p-3 rounded-xl shadow-soft-lg border border-slate-200 w-64 cursor-pointer"
               onClick={() => { setIsOpen(true); setHasNewAlert(false); }}
             >
               <div className="flex items-start gap-3">
@@ -110,7 +111,7 @@ export function AIChat() {
                   <Bot className="h-4 w-4 text-primary-700" />
                 </div>
                 <div className="bg-white p-4 rounded-2xl rounded-tl-md shadow-soft border border-stone-100 text-sm text-stone-700 leading-relaxed">
-                  Hello! I'm your fraud detection assistant. Here are my latest insights from the transaction data:
+                  Hello! I&apos;m your fraud detection assistant. Here are my latest insights from the transaction data:
                 </div>
               </div>
 
@@ -131,7 +132,7 @@ export function AIChat() {
                   <div className="bg-primary-100 p-2 rounded-xl h-8 w-8 flex items-center justify-center flex-shrink-0">
                     <Bot className="h-4 w-4 text-primary-700" />
                   </div>
-                  <div className="bg-white p-4 rounded-2xl rounded-tl-md shadow-soft border border-stone-100 text-sm text-stone-700 whitespace-pre-wrap leading-relaxed">
+                  <div className="bg-white p-4 rounded-2xl rounded-tl-md shadow-soft border border-stone-100 text-sm text-stone-700 whitespace-pre-wrap leading-relaxed italic">
                     {insights.insight}
                   </div>
                 </div>

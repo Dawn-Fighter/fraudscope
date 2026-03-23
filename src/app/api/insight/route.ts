@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
+import { getInsights } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json({
-    critical: "Multiple repeat offenders remain active",
-    pattern: "Fraud concentrated in specific merchant categories",
-    recommend: "Apply threshold-based filtering"
-  });
+  const insights = getInsights();
+  return NextResponse.json(insights);
 }
