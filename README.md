@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛡️ FraudShield | Real-Time Fraud Intelligence
 
-## Getting Started
+**FraudShield** is a state-of-the-art, high-density fraud monitoring dashboard designed for real-time transaction intelligence. It leverages reactive data streams to detect fraudulent patterns such as impossible travel, velocity spikes, and high-risk merchant categories.
 
-First, run the development server:
+## 📊 Key Features
+
+- **Real-Time Fraud Feed**: Live-streaming alerts for suspicious transactions with instant "Freeze" or "Safe" action capabilities.
+- **Dynamic Risk Intelligence**: Includes Impossible Travel detection, Velocity Spikes, and Heatmap analysis of incident density.
+- **Advanced Data Visualizations**: Comparing legitimate vs. fraudulent transaction volumes through interactive charts (using `Recharts` and `D3`).
+- **AI Insights Ready**: Integrated AI notification system that surfaces newly detected fraud patterns and anomalies.
+- **Data Portability**: Full support for exporting comprehensive dashboard data into PDF reports.
+- **Live Attack Simulation**: Toggle dynamic transaction attacks to test detection thresholds and system response.
+
+## 🚀 Tech Stack
+
+- **Frontend**: Next.js 16 (Turbopack), React 19, Framer Motion
+- **Styling**: Tailwind CSS 4 with custom glassmorphism and high-density UI components
+- **Charting**: Recharts, D3.js, React-Simple-Maps
+- **Data Handling**: SWR (Stale-While-Revalidate) for high-performance reactive updates
+- **PDF Generation**: @react-pdf/renderer
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS version)
+- NPM or YARN
+
+### Installation
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/Dawn-Fighter/fraudscope.git
+    cd fraudscope
+    ```
+
+2.  **Install dependencies**:
+    Due to the cutting-edge versions used (Next 16, React 19), please use the legacy peer deps flag if you encounter resolution conflicts:
+    ```bash
+    npm install --legacy-peer-deps
+    ```
+
+3.  **Run the development server**:
+    ```bash
+    npm run dev
+    ```
+
+4.  **Open the dashboard**:
+    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📁 Project Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+├── app/                  # Next.js App Router (Pages & API Routes)
+├── components/           
+│   ├── dashboard/       # Core analytics & chart components
+│   ├── ai/              # AI-driven conversation & insight UI
+│   ├── pdf/             # PDF generation and export logic
+│   └── ui/              # Reusable high-density UI primitives
+└── lib/                 # Shared data loaders and utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📈 Dashboard Highlights
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Transaction Velocity**: 24-hour comparative monitoring of txn volume.
+- **Geographic Risk Map**: Visualizing global exposure and incident hotspots.
+- **Threat Radar**: Mapping multi-dimensional risk scores across diverse categories.
+- **Heatmap Intelligence**: Analyzing peak hours for fraudulent activity across the week.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚖️ License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private Project. Created for high-density fraud monitoring and intelligence.
