@@ -77,14 +77,11 @@ export default function Dashboard() {
           <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
             <div className="mx-auto px-4 py-3 items-center">
               <div className="flex items-center justify-between">
-                {/* Logo & Brand */}
+                {/* Page Title */}
                 <div className="flex items-center gap-3">
-                  <div className="bg-primary-600 p-2 rounded-xl shadow-sm">
-                    <Shield className="h-6 w-6 text-white" />
-                  </div>
                   <div>
                     <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                      Fraud<span className="text-primary-600">Shield</span>
+                      Overview
                     </h1>
                   </div>
                 </div>
@@ -148,9 +145,9 @@ export default function Dashboard() {
           </header>
 
           {/* Dashboard Grid */}
-          <main className="mx-auto px-4 py-4">
+          <main className="mx-auto px-4 py-4 max-w-[1600px]">
             {/* Hero KPI Section */}
-            <section className="mb-4">
+            <section id="overview" className="mb-4 scroll-mt-24">
               <AnimatedText delay={0.05}>
                 <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Core Analytics</h2>
               </AnimatedText>
@@ -161,8 +158,13 @@ export default function Dashboard() {
             <div className="flex flex-col xl:flex-row gap-4">
               {/* Left Column (Main Content) */}
               <div className="flex-1 flex flex-col gap-4 min-w-0">
-                <VelocityChart />
-                <HeatmapChart />
+                <section id="velocity" className="scroll-mt-24">
+                  <VelocityChart />
+                </section>
+                
+                <section id="heatmap" className="scroll-mt-24">
+                  <HeatmapChart />
+                </section>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <MerchantChart />
@@ -170,21 +172,14 @@ export default function Dashboard() {
                 </div>
 
                 {/* Risk Section */}
-                <section className="mt-2">
+                <section id="risk" className="mt-2 scroll-mt-24 flex flex-col gap-4">
                   <AnimatedText delay={0.75}>
-                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Risk Intelligence</h2>
+                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Risk & Threat Intelligence</h2>
                   </AnimatedText>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FalsePositiveChart />
                     <ImpossibleTravelFeed />
                   </div>
-                </section>
-
-                {/* Threat Intelligence Section */}
-                <section className="mt-2">
-                  <AnimatedText delay={0.95}>
-                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Threat Intelligence</h2>
-                  </AnimatedText>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ThreatRadarChart />
                     <FlaggedCategoryChart />
@@ -194,9 +189,9 @@ export default function Dashboard() {
 
               {/* Right Column (Sidebar) */}
               <div className="w-full xl:w-[380px] shrink-0">
-                <div className="sticky top-[80px] h-[calc(100vh-100px)]">
+                <section id="alerts" className="sticky top-[80px] h-[calc(100vh-100px)] scroll-mt-24">
                   <LiveFeed />
-                </div>
+                </section>
               </div>
             </div>
           </main>

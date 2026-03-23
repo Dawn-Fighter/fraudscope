@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { BeforeUnloadHandler } from "@/components/BeforeUnloadHandler";
+import { Sidebar } from "@/components/layout/Sidebar";
 
 const outfit = Outfit({ 
   subsets: ["latin"],
@@ -23,9 +24,14 @@ export default function RootLayout({
     <html lang="en" className={outfit.variable}>
       <head>
       </head>
-      <body className="font-outfit antialiased selection:bg-primary-100 selection:text-primary-900">
+      <body className="font-outfit antialiased selection:bg-primary-100 selection:text-primary-900 bg-slate-50">
         <BeforeUnloadHandler />
-        {children}
+        <div className="flex h-screen overflow-hidden">
+          <Sidebar />
+          <div className="flex-1 overflow-y-auto relative">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );
