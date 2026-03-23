@@ -10,7 +10,7 @@ export function MerchantChart() {
   const { data, isLoading } = useSWR("/api/merchant", fetcher);
 
   if (isLoading || !data) {
-    return <div className="bg-white rounded-3xl h-[380px] animate-pulse border border-slate-200 shadow-soft" />;
+    return <div className="bg-white rounded-2xl h-full min-h-[420px] animate-pulse border border-slate-200 shadow-soft" />;
   }
 
   const chartData = data.map((d: any) => ({
@@ -21,7 +21,7 @@ export function MerchantChart() {
   const COLORS = ["#4F46E5", "#6366F1", "#818CF8", "#A5B4FC", "#C7D2FE", "#E0E7FF"];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[380px] flex flex-col">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="p-5 border-b border-slate-100">
         <div className="flex items-center gap-3">
@@ -44,8 +44,8 @@ export function MerchantChart() {
                 data={chartData}
                 cx="50%"
                 cy="45%"
-                innerRadius={60}
-                outerRadius={90}
+                innerRadius={80}
+                outerRadius={120}
                 paddingAngle={2}
                 dataKey="value"
                 stroke="none"

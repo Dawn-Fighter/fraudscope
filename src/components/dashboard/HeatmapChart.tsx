@@ -55,7 +55,7 @@ export function HeatmapChart() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[450px] flex flex-col">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-auto flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-slate-100">
         <div className="flex justify-between items-center">
@@ -84,7 +84,7 @@ export function HeatmapChart() {
       </div>
 
       {/* Heatmap Grid */}
-      <div className="p-6 overflow-auto flex-1">
+      <div className="p-6 overflow-x-auto overflow-y-hidden flex-1">
         <div className="min-w-[800px]">
           {/* Hour Labels - Aligned with the 24 columns */}
           <div className="flex mb-4 pl-12">

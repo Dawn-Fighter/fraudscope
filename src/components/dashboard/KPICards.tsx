@@ -22,18 +22,18 @@ export function KPICards() {
       value: data.totalTransactions?.toLocaleString() || "0",
       icon: Activity,
       subtitle: "All processed",
-      accent: "bg-primary-600",
-      iconBg: "bg-slate-50",
-      iconColor: "text-slate-600",
+      accent: "bg-primary-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-primary-50 text-primary-600 border-primary-100",
     },
     {
       title: "Flagged Fraud",
       value: data.flaggedTransactions?.toLocaleString() || "0",
       icon: AlertTriangle,
       subtitle: `${data.fraudRate || 0}% rate`,
-      accent: "bg-error",
-      iconBg: "bg-red-50",
-      iconColor: "text-red-600",
+      accent: "bg-rose-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-rose-50 text-rose-600 border-rose-100",
       highlight: true,
     },
     {
@@ -41,61 +41,70 @@ export function KPICards() {
       value: data.impossibleTravel?.toLocaleString() || "0",
       icon: Plane,
       subtitle: "Velocity alerts",
-      accent: "bg-indigo-600",
-      iconBg: "bg-indigo-50",
-      iconColor: "text-indigo-600",
+      accent: "bg-rose-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-rose-50 text-rose-600 border-rose-100",
+      highlight: true,
     },
     {
       title: "Top Risk Category",
       value: data.highestRiskCategory || "N/A",
       icon: TrendingUp,
       subtitle: `${data.topRiskCategory?.rate || 0}% rate`,
-      accent: "bg-slate-400",
-      iconBg: "bg-slate-50",
-      iconColor: "text-slate-600",
+      accent: "bg-primary-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-primary-50 text-primary-600 border-primary-100",
     },
     {
       title: "Velocity Spike Users",
       value: data.velocitySpikeUsers?.toLocaleString() || "0",
       icon: Clock,
       subtitle: "UTC window",
-      accent: "bg-slate-400",
-      iconBg: "bg-slate-50",
-      iconColor: "text-slate-600",
+      accent: "bg-rose-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-rose-50 text-rose-600 border-rose-100",
+      highlight: true,
     },
     {
       title: "Fraud Rate",
       value: `${data.fraudRate || 0}%`,
       icon: CalendarDays,
       subtitle: "Weekly incidents",
-      accent: "bg-slate-400",
-      iconBg: "bg-slate-50",
-      iconColor: "text-slate-600",
+      accent: "bg-primary-500",
+      bgClass: "bg-primary-900 text-white border-primary-800 hover:bg-primary-800",
+      iconBg: "bg-primary-800 text-primary-300 border-primary-700",
+      darkTheme: true,
     }
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 text-slate-900">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 text-slate-900">
       {kpis.map((kpi, i) => (
         <div 
           key={i} 
-          className="relative bg-white rounded-xl p-3 border border-slate-200 shadow-soft hover:shadow-soft-lg transition-all group"
+          className={`relative rounded-2xl p-5 border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden ${kpi.bgClass || 'bg-white border-slate-200'}`}
         >
-          {/* Accent bar */}
-          <div className={`absolute top-0 left-0 right-0 h-1 ${kpi.accent} rounded-t-2xl`} />
+          {/* Subtle Accent Glow */}
+          {!kpi.darkTheme && (
+            <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 ${kpi.accent} pointer-events-none`} />
+          )}
           
-          <div className="flex items-center gap-2 mb-2">
-            <div className={`${kpi.iconBg} p-2 rounded-lg border border-slate-100 group-hover:bg-white group-hover:scale-105 transition-all`}>
-              <kpi.icon className={`h-4 w-4 ${kpi.iconColor}`} />
+          <div className="flex items-center gap-3 mb-4">
+            <div className={`${kpi.iconBg} p-2.5 rounded-xl border group-hover:scale-110 transition-transform duration-300`}>
+              <kpi.icon className="h-4 w-4" />
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{kpi.title}</p>
+            <p className={`text-[10px] font-bold uppercase tracking-widest ${kpi.darkTheme ? 'text-primary-200' : 'text-slate-500'} leading-tight`}>
+              {kpi.title}
+            </p>
           </div>
           
-          <div className="space-y-0.5">
-            <p className={`text-xl font-bold tracking-tight ${kpi.highlight ? 'text-error' : 'text-slate-900'}`}>
+          <div className="space-y-1 relative z-10">
+            <p className={`text-3xl font-black tracking-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}>
               {kpi.value}
             </p>
-            <p className="text-[10px] font-medium text-slate-400">{kpi.subtitle}</p>
+            <p className={`text-[11px] font-bold uppercase tracking-wider ${kpi.darkTheme ? 'text-primary-300' : 'text-slate-400'}`}>
+              {kpi.subtitle}
+            </p>
           </div>
         </div>
       ))}
