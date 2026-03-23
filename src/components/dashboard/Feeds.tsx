@@ -106,32 +106,47 @@ export function RepeatOffendersList() {
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="p-5">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {data.slice(0, 12).map((user: any, i: number) => (
-            <div 
-              key={i} 
-              className="bg-gradient-to-br from-stone-50 to-stone-100 rounded-2xl p-4 border border-stone-200/50 hover:shadow-soft transition-shadow"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className={`
-                  h-8 w-8 rounded-full flex items-center justify-center text-sm font-black
-                  ${i < 3 ? 'bg-gradient-to-br from-coral-500 to-pink-500 text-white' : 'bg-stone-200 text-stone-600'}
-                `}>
-                  {i + 1}
-                </div>
-                <span className="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-[10px] font-bold">
-                  {user.flags} flags
-                </span>
-              </div>
-              <div className="text-sm font-bold text-stone-900 truncate">{user.userId}</div>
-              <div className="text-xs text-stone-500 mt-1">
-                ${user.totalAmount?.toLocaleString()} at risk
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Vertical List */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-100">
+              <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Rank</th>
+              <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">User Identity</th>
+              <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Engagement</th>
+              <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Exposure</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {data.slice(0, 10).map((user: any, i: number) => (
+              <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                <td className="px-3 py-2 text-center">
+                  <div className={`
+                    mx-auto h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-black
+                    ${i < 3 ? 'bg-primary-600 text-white shadow-glow-primary' : 'bg-slate-100 text-slate-400'}
+                  `}>
+                    {i + 1}
+                  </div>
+                </td>
+                <td className="px-3 py-2">
+                  <div className="font-bold text-slate-900 text-xs tracking-tight">{user.userId}</div>
+                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 opacity-60 truncate max-w-[150px]">{user.txCount} txns</div>
+                </td>
+                <td className="px-3 py-2 text-center">
+                  <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border border-red-100 whitespace-nowrap">
+                    {user.flags} FLAGS
+                  </span>
+                </td>
+                <td className="px-3 py-2 text-right">
+                  <div className="font-bold text-slate-900 text-xs">
+                    ${user.totalAmount?.toLocaleString()}
+                  </div>
+                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5 opacity-60">High Risk</div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
