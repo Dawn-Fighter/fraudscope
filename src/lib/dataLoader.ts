@@ -105,7 +105,7 @@ export function getCityStats() {
       fraudAmount: Math.round(stats.flaggedAmount),
       totalAmount: Math.round(stats.amount),
       rate: parseFloat(((stats.flagged / stats.total) * 100).toFixed(2)),
-      trend: Math.round((Math.random() - 0.3) * 20),
+      trend: 0, // Mock calculation removed
     }))
     .sort((a, b) => b.fraudAmount - a.fraudAmount);
 }

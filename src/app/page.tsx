@@ -2,6 +2,7 @@
 
 import { KPICards } from "@/components/dashboard/KPICards";
 import { HeatmapChart } from "@/components/dashboard/HeatmapChart";
+import { VelocityChart } from "@/components/dashboard/VelocityChart";
 import { MerchantChart } from "@/components/dashboard/MerchantChart";
 import { CityChart } from "@/components/dashboard/CityChart";
 import { ThresholdChart } from "@/components/dashboard/ThresholdChart";
@@ -87,16 +88,21 @@ export default function Dashboard() {
 
           {/* Main Charts Grid */}
           <section className="grid grid-cols-12 gap-6 mb-8">
+            {/* Velocity - Full Width */}
+            <div className="col-span-12 xl:col-span-8">
+              <VelocityChart />
+            </div>
+
+            {/* Live Feed */}
+            <div className="col-span-12 xl:col-span-4 xl:row-span-3">
+              <LiveFeed />
+            </div>
+
             {/* Heatmap - Full Width */}
             <div className="col-span-12 xl:col-span-8">
               <HeatmapChart />
             </div>
             
-            {/* Live Feed */}
-            <div className="col-span-12 xl:col-span-4 xl:row-span-2">
-              <LiveFeed />
-            </div>
-
             {/* Charts Row */}
             <div className="col-span-12 xl:col-span-4">
               <MerchantChart />

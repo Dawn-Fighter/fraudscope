@@ -17,13 +17,32 @@ export function HeatmapChart() {
   }
 
   let maxVal = 0;
-  data.forEach((dayRow: number[]) => {
-    if (Array.isArray(dayRow)) {
-      dayRow.forEach((val: number) => {
-        if (val > maxVal) maxVal = val;
+  
+  // Transform the flat array of objects into the 2D array format expected by the component
+  // API returns: [{day: "Mon", hour: 0, count: 5}, ...]
+  // We need: [[day0hour0, day0hour1...], [day1hour0, day1hour1...]]
+  const heatmapData = Array(7).fill(0).map(() => Array(24).fill(0));
+  
+  if (data && Array.isArray(data) && data.length > 0) {
+    if (typeof data[0] === 'object' && data[0].day !== undefined) {
+      data.forEach(item => {
+        const dayIdx = DAYS.indexOf(item.day);
+        if (dayIdx !== -1 && item.hour >= 0 && item.hour < 24) {
+          heatmapData[dayIdx][item.hour] = item.count;
+          if (item.count > maxVal) maxVal = item.count;
+        }
+      });
+    } else {
+      // Fallback for old format
+      data.forEach((dayRow: number[]) => {
+        if (Array.isArray(dayRow)) {
+          dayRow.forEach((val: number) => {
+            if (val > maxVal) maxVal = val;
+          });
+        }
       });
     }
-  });
+  }
 
   const getColor = (val: number) => {
     if (val === 0) return "bg-stone-100";
@@ -84,7 +103,7 @@ export function HeatmapChart() {
               <div key={day} className="flex items-center gap-3">
                 <div className="w-10 text-xs font-bold text-stone-500 text-right">{day}</div>
                 <div className="flex-1 flex gap-1.5">
-                  {Array.isArray(data[dIdx]) && data[dIdx].map((val: number, hIdx: number) => (
+                  {heatmapData[dIdx].map((val: number, hIdx: number) => (
                     <div
                       key={hIdx}
                       title={`${day} ${hIdx}:00 — ${val} flagged`}

@@ -14,7 +14,7 @@ export function MerchantChart() {
   }
 
   const chartData = data.map((d: any) => ({
-    name: d.category,
+    name: d.name,
     rate: d.fraudRate,
     flags: d.flagged
   })).sort((a: any, b: any) => b.rate - a.rate);
