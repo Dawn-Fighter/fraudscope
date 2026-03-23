@@ -75,31 +75,25 @@ export default function Dashboard() {
             <KPICards />
           </section>
 
-          {/* Main Charts Grid */}
-          <section className="grid grid-cols-12 gap-4 mb-4">
-            {/* Velocity - Full Width */}
-            <div className="col-span-12 xl:col-span-8">
+          {/* Main Charts Area */}
+          <div className="flex flex-col xl:flex-row gap-4 mb-4">
+            {/* Left Column */}
+            <div className="flex-1 flex flex-col gap-4 min-w-0">
               <VelocityChart />
-            </div>
-
-            {/* Live Feed */}
-            <div className="col-span-12 xl:col-span-4 xl:row-span-3">
-              <LiveFeed />
-            </div>
-
-            {/* Heatmap - Full Width */}
-            <div className="col-span-12 xl:col-span-8">
               <HeatmapChart />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <MerchantChart />
+                <CityChart />
+              </div>
             </div>
-            
-            {/* Charts Row */}
-            <div className="col-span-12 lg:col-span-6 xl:col-span-4">
-              <MerchantChart />
+
+            {/* Right Column */}
+            <div className="w-full xl:w-[380px] shrink-0">
+              <div className="sticky top-20 h-[calc(100vh-120px)]">
+                <LiveFeed />
+              </div>
             </div>
-            <div className="col-span-12 lg:col-span-6 xl:col-span-4">
-              <CityChart />
-            </div>
-          </section>
+          </div>
 
           {/* Risk Section */}
           <section className="mb-4">

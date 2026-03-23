@@ -19,7 +19,7 @@ export function VelocityChart() {
 
   if (isLoading || !data) {
     return (
-      <div className="bg-white rounded-2xl h-[400px] animate-pulse border border-slate-200 shadow-soft" />
+      <div className="bg-white rounded-2xl h-[360px] animate-pulse border border-slate-200 shadow-soft" />
     );
   }
 
@@ -35,7 +35,7 @@ export function VelocityChart() {
   }));
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[300px] flex flex-col">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[360px] flex flex-col">
       <div className="p-6 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Zap className="h-5 w-5 text-indigo-500 fill-indigo-500" />
@@ -54,7 +54,7 @@ export function VelocityChart() {
         </div>
       </div>
 
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 pb-2">
         <ResponsiveContainer width="100%" height="100%" minHeight={150}>
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
