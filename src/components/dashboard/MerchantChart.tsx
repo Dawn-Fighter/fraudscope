@@ -6,6 +6,11 @@ import { Store } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+interface MerchantData {
+  name: string;
+  value: number;
+}
+
 export function MerchantChart() {
   const { data, isLoading } = useSWR("/api/merchant", fetcher);
 
@@ -13,12 +18,26 @@ export function MerchantChart() {
     return <div className="bg-white rounded-2xl h-full min-h-[420px] animate-pulse border border-slate-200 shadow-soft" />;
   }
 
-  const chartData = data.map((d: any) => ({
-    name: d.name,
-    value: d.flagged // Using absolute flagged count for pie slices
-  })).sort((a: any, b: any) => b.value - a.value);
+  const chartData: MerchantData[] = data.map((d: any) => {
+    return {
+      name: d.name,
+      value: d.value // Graph total transactions, so we can use all actual categories naturally!
+    };
+  })
+  .filter((d: MerchantData) => d.value > 0)
+  .sort((a: MerchantData, b: MerchantData) => b.value - a.value);
 
-  const COLORS = ["#4F46E5", "#6366F1", "#818CF8", "#A5B4FC", "#C7D2FE", "#E0E7FF"];
+  // Distinct, professional color palette for categories
+  const COLORS = [
+    "#6366F1", // Indigo
+    "#EC4899", // Rose
+    "#14B8A6", // Teal
+    "#F59E0B", // Amber
+    "#8B5CF6", // Violet
+    "#10B981", // Emerald
+    "#F43F5E", // Red
+    "#3B82F6", // Blue
+  ];
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-full flex flex-col">
@@ -29,8 +48,8 @@ export function MerchantChart() {
             <Store className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-900">Category Risk</h3>
-            <p className="text-xs text-slate-400 font-medium">Fraud incidents by merchant type</p>
+            <h3 className="text-base font-bold text-slate-900">Transaction Volume</h3>
+            <p className="text-xs text-slate-400 font-medium">Total transactions by category</p>
           </div>
         </div>
       </div>
@@ -46,11 +65,11 @@ export function MerchantChart() {
                 cy="45%"
                 innerRadius={80}
                 outerRadius={120}
-                paddingAngle={2}
+                paddingAngle={3}
                 dataKey="value"
                 stroke="none"
               >
-                {chartData.map((_entry: any, index: number) => (
+                {chartData.map((_entry: MerchantData, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -64,7 +83,7 @@ export function MerchantChart() {
                   boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                   padding: '12px 16px'
                 }}
-                formatter={(value: number) => [`${value} incidents`, 'Fraud Count']}
+                formatter={(value: any) => [value.toLocaleString(), 'Transactions']}
                 itemStyle={{ fontSize: '12px', fontWeight: 600, color: '#fff' }}
               />
               <Legend 
@@ -80,9 +99,9 @@ export function MerchantChart() {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none -mt-8">
             <div className="text-center">
               <div className="text-2xl font-black text-slate-900 tracking-tighter">
-                {chartData.reduce((acc: number, cur: any) => acc + cur.value, 0)}
+                {chartData.reduce((acc: number, cur: MerchantData) => acc + cur.value, 0).toLocaleString()}
               </div>
-              <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Flags</div>
+              <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Txns</div>
             </div>
           </div>
         </div>

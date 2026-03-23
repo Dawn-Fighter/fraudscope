@@ -71,9 +71,9 @@ export function KPICards() {
       icon: CalendarDays,
       subtitle: "Weekly incidents",
       accent: "bg-primary-500",
-      bgClass: "bg-primary-900 text-white border-primary-800 hover:bg-primary-800",
-      iconBg: "bg-primary-800 text-primary-300 border-primary-700",
-      darkTheme: true,
+      bgClass: "bg-white hover:bg-slate-50 text-slate-900",
+      iconBg: "bg-primary-50 text-primary-600 border-primary-100",
+      darkTheme: false,
     }
   ];
 

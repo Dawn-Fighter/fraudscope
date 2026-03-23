@@ -41,7 +41,7 @@ export function FalsePositiveChart() {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-full flex flex-col">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden h-[400px] flex flex-col">
       {/* Header */}
       <div className="p-5 border-b border-slate-100">
         <div className="flex items-center justify-between">
@@ -67,7 +67,7 @@ export function FalsePositiveChart() {
 
       {/* Chart */}
       <div className="p-5 flex-1 min-h-0">
-        <div className="h-[280px] w-full">
+        <div className="h-full w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
               <defs>

@@ -13,7 +13,7 @@ export function ImpossibleTravelFeed() {
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-[400px] flex flex-col">
+    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="p-5 border-b border-stone-100">
         <div className="flex items-center justify-between">
