@@ -216,7 +216,7 @@ export function getRepeatOffenders(limit = 12) {
       totalAmount: Math.round(stats.amount),
       txCount: stats.txCount,
     }))
-    .sort((a, b) => b.flags - a.flags)
+    .sort((a, b) => b.flags - a.flags || b.totalAmount - a.totalAmount)
     .slice(0, limit);
 }
 

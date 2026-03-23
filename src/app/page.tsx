@@ -8,7 +8,8 @@ import { MerchantChart } from "@/components/dashboard/MerchantChart";
 import { CityChart } from "@/components/dashboard/CityChart";
 import { FalsePositiveChart } from "@/components/dashboard/FalsePositiveChart";
 import { LiveFeed } from "@/components/dashboard/LiveFeed";
-import { ImpossibleTravelFeed, RepeatOffendersList } from "@/components/dashboard/Feeds";
+import { ImpossibleTravelFeed } from "@/components/dashboard/Feeds";
+import { FlaggedCategoryChart } from "@/components/dashboard/FlaggedCategoryChart";
 import { AIChat } from "@/components/ai/AIChat";
 import { Shield, Sparkles, TrendingUp, Zap } from "lucide-react";
 
@@ -108,10 +109,10 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* Offenders Section */}
+          {/* Flagged Categories Section */}
           <section>
-            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Entity Watchlist</h2>
-            <RepeatOffendersList />
+            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Fraud Distribution</h2>
+            <FlaggedCategoryChart />
           </section>
         </main>
       </div>
