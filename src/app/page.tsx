@@ -10,6 +10,7 @@ import { FalsePositiveChart } from "@/components/dashboard/FalsePositiveChart";
 import { LiveFeed } from "@/components/dashboard/LiveFeed";
 import { ImpossibleTravelFeed } from "@/components/dashboard/Feeds";
 import { FlaggedCategoryChart } from "@/components/dashboard/FlaggedCategoryChart";
+import { ThreatRadarChart } from "@/components/dashboard/ThreatRadarChart";
 import { AIChat } from "@/components/ai/AIChat";
 import { Shield, Sparkles, TrendingUp, Zap } from "lucide-react";
 
@@ -117,8 +118,11 @@ export default function Dashboard() {
 
           {/* Flagged Categories Section */}
           <section>
-            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Fraud Distribution</h2>
-            <FlaggedCategoryChart />
+            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Threat Intelligence</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <ThreatRadarChart />
+              <FlaggedCategoryChart />
+            </div>
           </section>
         </main>
       </div>
