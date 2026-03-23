@@ -81,9 +81,9 @@ export function KPICards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 text-slate-900">
       {kpis.map((kpi, i) => (
-        <AnimatedReveal key={i} delay={0.1 + (i * 0.05)}>
+        <AnimatedReveal key={i} delay={0.1 + (i * 0.05)} className="h-full">
           <div 
-            className={`relative rounded-2xl p-5 border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden ${kpi.bgClass || 'bg-white border-slate-200'}`}
+            className={`relative rounded-2xl p-5 border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden h-full flex flex-col justify-between ${kpi.bgClass || 'bg-white border-slate-200'}`}
           >
             {/* Subtle Accent Glow */}
             {!kpi.darkTheme && (
@@ -92,7 +92,7 @@ export function KPICards() {
             
             <div className="flex items-center gap-3 mb-4">
               <motion.div 
-                className={`${kpi.iconBg} p-2.5 rounded-xl border group-hover:scale-110 transition-transform duration-300`}
+                className={`${kpi.iconBg} p-2.5 rounded-xl border group-hover:scale-110 transition-transform duration-300 shrink-0`}
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ 
@@ -103,8 +103,8 @@ export function KPICards() {
               >
                 <kpi.icon className="h-4 w-4" />
               </motion.div>
-              <AnimatedText delay={0.2 + (i * 0.05)}>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${kpi.darkTheme ? 'text-primary-200' : 'text-slate-500'} leading-tight`}>
+              <AnimatedText delay={0.2 + (i * 0.05)} className="min-w-0">
+                <p className={`text-[10px] font-bold uppercase tracking-widest truncate ${kpi.darkTheme ? 'text-primary-200' : 'text-slate-500'} leading-tight`}>
                   {kpi.title}
                 </p>
               </AnimatedText>
@@ -112,12 +112,15 @@ export function KPICards() {
             
             <div className="space-y-1 relative z-10">
               <AnimatedText delay={0.25 + (i * 0.05)}>
-                <p className={`text-3xl font-black tracking-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}>
+                <p 
+                  className={`text-2xl sm:text-3xl font-black tracking-tight line-clamp-2 leading-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}
+                  title={kpi.value}
+                >
                   {kpi.value}
                 </p>
               </AnimatedText>
               <AnimatedText delay={0.3 + (i * 0.05)}>
-                <p className={`text-[11px] font-bold uppercase tracking-wider ${kpi.darkTheme ? 'text-primary-300' : 'text-slate-400'}`}>
+                <p className={`text-[11px] font-bold uppercase tracking-wider truncate ${kpi.darkTheme ? 'text-primary-300' : 'text-slate-400'}`}>
                   {kpi.subtitle}
                 </p>
               </AnimatedText>
