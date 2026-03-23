@@ -6,7 +6,7 @@ import { HeatmapChart } from "@/components/dashboard/HeatmapChart";
 import { VelocityChart } from "@/components/dashboard/VelocityChart";
 import { MerchantChart } from "@/components/dashboard/MerchantChart";
 import { CityChart } from "@/components/dashboard/CityChart";
-import { ThresholdChart } from "@/components/dashboard/ThresholdChart";
+import { FalsePositiveChart } from "@/components/dashboard/FalsePositiveChart";
 import { LiveFeed } from "@/components/dashboard/LiveFeed";
 import { ImpossibleTravelFeed, RepeatOffendersList } from "@/components/dashboard/Feeds";
 import { AIChat } from "@/components/ai/AIChat";
@@ -100,7 +100,7 @@ export default function Dashboard() {
             <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Risk Intelligence</h2>
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 lg:col-span-6">
-                <ThresholdChart />
+                <FalsePositiveChart />
               </div>
               <div className="col-span-12 lg:col-span-6">
                 <ImpossibleTravelFeed />

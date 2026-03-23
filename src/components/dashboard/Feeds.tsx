@@ -99,8 +99,8 @@ export function RepeatOffendersList() {
               <UserX className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-stone-900">Repeat Offenders</h3>
-              <p className="text-xs text-stone-500">Users with multiple flags</p>
+              <h3 className="text-base font-bold text-slate-900">High-Velocity Offenders</h3>
+              <p className="text-xs text-slate-400 font-medium">Multiple flags within a 1-hour window</p>
             </div>
           </div>
         </div>
