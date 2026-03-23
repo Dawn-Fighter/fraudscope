@@ -1,15 +1,17 @@
 "use client";
 
 import useSWR from "swr";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { Store } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function MerchantChart() {
   const { data, isLoading } = useSWR("/api/merchant", fetcher);
 
-  if (isLoading || !data) return <Card className="h-[350px] animate-pulse bg-white border-slate-200" />;
+  if (isLoading || !data) {
+    return <div className="bg-white rounded-3xl h-[350px] animate-pulse border border-stone-200/50 shadow-soft" />;
+  }
 
   const chartData = data.map((d: any) => ({
     name: d.category,
@@ -17,32 +19,71 @@ export function MerchantChart() {
     flags: d.flagged
   })).sort((a: any, b: any) => b.rate - a.rate);
 
+  const getBarColor = (rate: number) => {
+    if (rate > 3) return "#F97316"; // coral
+    if (rate > 1) return "#EC4899"; // pink
+    return "#7C3AED"; // primary
+  };
+
   return (
-    <Card className="border-slate-200 bg-white shadow-sm overflow-hidden">
-      <CardHeader className="pb-2 border-b border-slate-100 bg-slate-50/50">
-        <CardTitle className="text-slate-800 text-base font-bold">Fraud Rate by Category</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="h-[250px] w-full">
+    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-full">
+      {/* Header */}
+      <div className="p-5 border-b border-stone-100">
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-br from-primary-500 to-pink-500 p-2.5 rounded-2xl">
+            <Store className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-stone-900">Category Risk</h3>
+            <p className="text-xs text-stone-500">Fraud rate by merchant type</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div className="p-5">
+        <div className="h-[240px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={true} stroke="#f1f5f9" />
-              <XAxis type="number" stroke="#64748b" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 12, fontWeight: 600 }} axisLine={{ stroke: '#e2e8f0' }} tickLine={false} />
-              <YAxis dataKey="name" type="category" stroke="#475569" width={100} tick={{ fontSize: 11, fontWeight: 600 }} axisLine={false} tickLine={false} />
-              <Tooltip 
-                cursor={{fill: '#f8fafc'}}
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff' }}
-                formatter={(value: number) => [`${value}%`, 'Fraud Rate']}
+            <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
+              <XAxis 
+                type="number" 
+                stroke="#A8A29E" 
+                tickFormatter={(v) => `${v}%`} 
+                tick={{ fontSize: 11, fontWeight: 600 }} 
+                axisLine={false}
+                tickLine={false}
               />
-              <Bar dataKey="rate" radius={[0, 4, 4, 0]} barSize={24}>
+              <YAxis 
+                dataKey="name" 
+                type="category" 
+                stroke="#78716C" 
+                width={85} 
+                tick={{ fontSize: 11, fontWeight: 600 }} 
+                axisLine={false} 
+                tickLine={false}
+              />
+              <Tooltip 
+                cursor={{ fill: '#FAFAF9', radius: 8 }}
+                contentStyle={{ 
+                  backgroundColor: '#1C1917', 
+                  border: 'none',
+                  borderRadius: '12px', 
+                  color: '#fff',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                  padding: '12px 16px'
+                }}
+                formatter={(value: number) => [`${value}%`, 'Fraud Rate']}
+                labelStyle={{ color: '#A8A29E', marginBottom: '4px', fontSize: '11px' }}
+              />
+              <Bar dataKey="rate" radius={[0, 8, 8, 0]} barSize={28}>
                 {chartData.map((entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={entry.rate > 2 ? '#ef4444' : '#3b82f6'} />
+                  <Cell key={`cell-${index}`} fill={getBarColor(entry.rate)} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

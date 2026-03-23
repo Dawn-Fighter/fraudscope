@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { heatmapData } from '@/lib/mockData';
+import { getHeatmapData } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(heatmapData);
+  const data = getHeatmapData();
+  return NextResponse.json(data);
 }

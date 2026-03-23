@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { feedData } from '@/lib/mockData';
+import { getRecentFlagged } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(feedData);
+  const data = getRecentFlagged(20);
+  return NextResponse.json(data);
 }

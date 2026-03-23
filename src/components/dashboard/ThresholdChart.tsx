@@ -1,75 +1,112 @@
 "use client";
 
 import useSWR from "swr";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from "recharts";
+import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, ZAxis } from "recharts";
+import { DollarSign, AlertTriangle } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function ThresholdChart() {
   const { data, isLoading } = useSWR("/api/feed", fetcher);
 
-  if (isLoading || !data) return <Card className="h-[400px] animate-pulse bg-white border-slate-200" />;
+  if (isLoading || !data) {
+    return <div className="bg-white rounded-3xl h-[400px] animate-pulse border border-stone-200/50 shadow-soft" />;
+  }
 
-  // We'll use the feed data for scatter, formatting timestamp for X axis
-  const scatterData = data.slice(0, 100).map((d: any) => ({
-    time: new Date(d.timestamp).getTime(),
-    amount: d.amount,
-    id: d.transactionId,
-    city: d.city
+  const scatterData = data.slice(0, 50).map((tx: any, i: number) => ({
+    x: i,
+    y: tx.amount,
+    id: tx.transactionId,
+    user: tx.userId,
+    city: tx.city,
   }));
 
-  const minTime = Math.min(...scatterData.map((d: any) => d.time));
-  const maxTime = Math.max(...scatterData.map((d: any) => d.time));
-
   return (
-    <Card className="h-full border-slate-200 bg-white shadow-sm overflow-hidden">
-      <CardHeader className="pb-2 border-b border-slate-100 bg-slate-50/50">
-        <CardTitle className="text-slate-800 text-base font-bold">$500 Rule Detection Matrix</CardTitle>
-        <CardDescription className="text-slate-500 font-medium">All flagged items bypass the $500 threshold</CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="h-[250px] w-full">
+    <div className="bg-white rounded-3xl border border-stone-200/50 shadow-soft overflow-hidden h-full">
+      {/* Header */}
+      <div className="p-5 border-b border-stone-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-coral-500 to-rose-500 p-2.5 rounded-2xl">
+              <DollarSign className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-stone-900">$500 Threshold Analysis</h3>
+              <p className="text-xs text-stone-500">All fraud occurs above this amount</p>
+            </div>
+          </div>
+          
+          {/* Alert Badge */}
+          <div className="flex items-center gap-2 bg-coral-50 text-coral-700 px-4 py-2 rounded-full border border-coral-200">
+            <AlertTriangle className="h-4 w-4" />
+            <span className="text-xs font-bold">100% &gt; $500</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div className="p-5">
+        <div className="h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis 
                 type="number" 
-                dataKey="time" 
-                domain={[minTime, maxTime]} 
-                name="Time" 
-                tickFormatter={(time) => new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                stroke="#64748b"
-                tick={{ fontSize: 11, fontWeight: 600 }}
-                axisLine={{ stroke: '#e2e8f0' }}
+                dataKey="x" 
+                name="Index" 
+                tick={{ fontSize: 10 }}
+                axisLine={false}
                 tickLine={false}
+                hide
               />
               <YAxis 
                 type="number" 
-                dataKey="amount" 
+                dataKey="y" 
                 name="Amount" 
-                domain={[0, 3000]} 
-                tickFormatter={(v) => `$${v}`}
-                stroke="#64748b"
+                stroke="#A8A29E"
                 tick={{ fontSize: 11, fontWeight: 600 }}
-                axisLine={{ stroke: '#e2e8f0' }}
+                tickFormatter={(v) => `$${v}`}
+                domain={[0, 'auto']}
+                axisLine={false}
                 tickLine={false}
               />
+              <ZAxis range={[60, 60]} />
               <Tooltip 
-                cursor={{ strokeDasharray: '3 3', stroke: '#cbd5e1' }}
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', color: '#fff' }}
-                formatter={(value: number, name: string) => {
-                  if (name === "Amount") return [`$${value.toFixed(2)}`, "Amount"];
-                  if (name === "Time") return [new Date(value).toLocaleTimeString(), "Time"];
-                  return [value, name];
+                cursor={{ strokeDasharray: '3 3', stroke: '#D6D3D1' }}
+                contentStyle={{ 
+                  backgroundColor: '#1C1917', 
+                  border: 'none',
+                  borderRadius: '12px', 
+                  color: '#fff',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+                  padding: '12px 16px'
+                }}
+                formatter={(value: number) => [`$${value.toLocaleString()}`, 'Amount']}
+                labelFormatter={() => ''}
+              />
+              {/* $500 Threshold Line */}
+              <ReferenceLine 
+                y={500} 
+                stroke="#F97316"
+                strokeWidth={2}
+                strokeDasharray="8 4"
+                label={{ 
+                  value: '$500 THRESHOLD', 
+                  position: 'right',
+                  fill: '#F97316',
+                  fontSize: 10,
+                  fontWeight: 700,
                 }}
               />
-              <ReferenceLine y={500} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: '$500 Risk Threshold', fill: '#ef4444', fontSize: 12, fontWeight: 'bold' }} />
-              <Scatter data={scatterData} fill="#ef4444" shape="circle" line={{ stroke: '#fca5a5', strokeWidth: 1 }} />
+              <Scatter 
+                name="Transactions" 
+                data={scatterData} 
+                fill="#EC4899"
+                fillOpacity={0.7}
+              />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

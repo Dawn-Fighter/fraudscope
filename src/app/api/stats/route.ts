@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { statsData } from '@/lib/mockData';
+import { getStats } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(statsData);
+  const stats = getStats();
+  return NextResponse.json(stats);
 }

@@ -31,12 +31,12 @@ export const travelData = [
 ];
 
 export const cityFraudData = [
-  { city: "Dubai", rate: 2.4 },
-  { city: "London", rate: 1.8 },
-  { city: "New York", rate: 1.5 },
-  { city: "Sydney", rate: 1.2 },
-  { city: "Tokyo", rate: 0.9 },
-  { city: "Paris", rate: 0.6 }
+  { city: "Dubai", fraudAmount: 245000, transactions: 12400, flagged: 298, rate: 2.4, trend: 12 },
+  { city: "London", fraudAmount: 189000, transactions: 10500, flagged: 189, rate: 1.8, trend: -5 },
+  { city: "New York", fraudAmount: 156000, transactions: 10400, flagged: 156, rate: 1.5, trend: 3 },
+  { city: "Sydney", fraudAmount: 124000, transactions: 10333, flagged: 124, rate: 1.2, trend: 8 },
+  { city: "Tokyo", fraudAmount: 89000, transactions: 9889, flagged: 89, rate: 0.9, trend: -2 },
+  { city: "Paris", fraudAmount: 67000, transactions: 11167, flagged: 67, rate: 0.6, trend: -8 }
 ];
 
 export const heatmapData = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].flatMap(day => 

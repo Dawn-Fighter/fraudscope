@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { velocityData } from '@/lib/mockData';
+import { getVelocityData } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(velocityData);
+  const data = getVelocityData();
+  return NextResponse.json(data);
 }

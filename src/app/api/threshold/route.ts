@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { thresholdData } from '@/lib/mockData';
+import { getThresholdData } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(thresholdData);
+  const data = getThresholdData();
+  return NextResponse.json(data);
 }

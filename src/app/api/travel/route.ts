@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { travelData } from '@/lib/mockData';
+import { getImpossibleTravel } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(travelData);
+  const data = getImpossibleTravel(20);
+  return NextResponse.json(data);
 }

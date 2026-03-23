@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { merchantData } from '@/lib/mockData';
+import { getMerchantStats } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(merchantData);
+  const data = getMerchantStats();
+  return NextResponse.json(data);
 }

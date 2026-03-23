@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { offendersData } from '@/lib/mockData';
+import { getRepeatOffenders } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(offendersData);
+  const data = getRepeatOffenders(12);
+  return NextResponse.json(data);
 }

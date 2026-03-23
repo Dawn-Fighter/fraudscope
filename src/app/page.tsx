@@ -1,272 +1,141 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { KPIGrid } from "@/components/KPIGrid";
-import { MerchantRiskTreemap, VelocityTimeline, CityFraudBar } from "@/components/Charts";
-import { ImpossibleTravelFeed, OffenderLeaderboard, FlaggedTransactionFeed } from "@/components/Feeds";
-import { FraudTimeHeatmap, ThresholdIndicator, FalsePositiveDonut, AIInsightPanel } from "@/components/MoreCharts";
-import { CityNetworkGraph } from "@/components/NetworkGraph";
-import { Card } from "@/components/ui/card";
-import { ShieldAlert, Activity, Menu, X, LayoutDashboard, Radio, PieChart, Globe } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { KPICards } from "@/components/dashboard/KPICards";
+import { HeatmapChart } from "@/components/dashboard/HeatmapChart";
+import { MerchantChart } from "@/components/dashboard/MerchantChart";
+import { CityChart } from "@/components/dashboard/CityChart";
+import { ThresholdChart } from "@/components/dashboard/ThresholdChart";
+import { LiveFeed } from "@/components/dashboard/LiveFeed";
+import { ImpossibleTravelFeed, RepeatOffendersList } from "@/components/dashboard/Feeds";
+import { AIChat } from "@/components/ai/AIChat";
+import { Shield, Sparkles, TrendingUp, Zap } from "lucide-react";
 
 export default function Dashboard() {
-  const [data, setData] = useState<any>(null);
-  const [lastUpdate, setLastUpdate] = useState(Date.now());
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeView, setActiveView] = useState('Overview');
-
-  const fetchAll = async () => {
-    const endpoints = ['stats', 'merchant', 'velocity', 'travel', 'cities', 'heatmap', 'threshold', 'offenders', 'feed', 'citypairs', 'insight'];
-    try {
-      const results = await Promise.all(endpoints.map(e => fetch(`/api/${e}`).then(r => r.json())));
-      const loadedData = endpoints.reduce((acc, curr, i) => {
-        acc[curr] = results[i];
-        return acc;
-      }, {} as any);
-      setData(loadedData);
-      setLastUpdate(Date.now());
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  useEffect(() => {
-    fetchAll();
-
-    const interval = setInterval(() => {
-      setData((prev: any) => {
-        if (!prev) return prev;
-        
-        // Realtime simulation
-        const addedTx = Math.floor(Math.random() * 5);
-        const shouldFlag = Math.random() > 0.8;
-        
-        const newStats = {
-          ...prev.stats,
-          totalTransactions: prev.stats.totalTransactions + addedTx,
-          flaggedTransactions: prev.stats.flaggedTransactions + (shouldFlag ? 1 : 0),
-        };
-
-        const newTravel = [...prev.travel];
-        if (Math.random() > 0.85) { // Add impossible travel event
-          const users = ["USR-14397", "USR-09211", "USR-55102", "USR-33019", "USR-11942"];
-          const cities = ["Dubai", "Singapore", "London", "Tokyo", "NY", "Paris"];
-          const user = users[Math.floor(Math.random() * users.length)];
-          const c1 = cities[Math.floor(Math.random() * cities.length)];
-          const c2 = cities[Math.floor(Math.random() * cities.length)];
-          
-          if (c1 !== c2) {
-            newTravel.unshift({
-              id: user,
-              transition: `${c1} → ${c2}`,
-              gap: `${Math.floor(Math.random() * 10 + 1)} min`,
-              amount: Math.floor(Math.random() * 5000 + 500),
-              risk: Math.random() > 0.5 ? "CRITICAL" : "HIGH"
-            });
-            if (newTravel.length > 5) newTravel.pop();
-          }
-        }
-
-        const newFeed = [...prev.feed];
-        if (shouldFlag) {
-          const merchants = ["Crypto", "Electronics", "Dining", "Travel", "Clothing"];
-          const cities = ["Dubai", "London", "New York", "Sydney", "Tokyo", "Paris"];
-          newFeed.unshift({
-            id: `TX-${Math.floor(Math.random() * 10000)}`,
-            user: `USR-${Math.floor(Math.random() * 100000)}`,
-            amount: Math.floor(Math.random() * 10000),
-            city: cities[Math.floor(Math.random() * cities.length)],
-            merchant: merchants[Math.floor(Math.random() * merchants.length)],
-            timestamp: "Just now"
-          });
-          if (newFeed.length > 5) newFeed.pop();
-        }
-
-        return {
-          ...prev,
-          stats: newStats,
-          travel: newTravel,
-          feed: newFeed,
-        };
-      });
-      setLastUpdate(Date.now());
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!data) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-100 text-slate-900">
-        <div className="flex flex-col items-center">
-          <Activity className="w-12 h-12 text-rose-500 animate-pulse mb-4" />
-          <h1 className="text-xl tracking-widest uppercase font-bold text-slate-500" style={{ fontFamily: 'var(--font-jetbrains-mono)' }}>Loading FRAUDSCOPE Engine...</h1>
-        </div>
-      </div>
-    );
-  }
-
-  const menuItems = [
-    { name: 'Overview', icon: <LayoutDashboard size={18} /> },
-    { name: 'Live Feeds', icon: <Radio size={18} /> },
-    { name: 'Analytics', icon: <PieChart size={18} /> },
-    { name: 'Network', icon: <Globe size={18} /> }
-  ];
-
   return (
-    <div className="flex bg-slate-100 min-h-screen relative overflow-hidden">
+    <div className="min-h-screen bg-stone-50 relative overflow-hidden">
+      {/* Decorative Background Blobs */}
+      <div className="blob w-[600px] h-[600px] bg-primary-200 top-[-200px] right-[-100px] fixed" />
+      <div className="blob w-[500px] h-[500px] bg-coral-200 bottom-[-150px] left-[-100px] fixed" />
+      <div className="blob w-[400px] h-[400px] bg-teal-200 top-[40%] left-[30%] fixed" />
       
-      {/* SLIDE-IN SIDEBAR */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsSidebarOpen(false)}
-              className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm z-40 lg:hidden"
-            />
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-              className="absolute lg:relative w-64 h-screen bg-white border-r border-slate-200 z-50 flex flex-col pt-4 shadow-2xl lg:shadow-none"
-            >
-              <div className="flex items-center justify-between px-4 mb-8">
-                <div className="flex items-center gap-2 text-rose-600 font-bold uppercase tracking-widest text-sm" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
-                  <ShieldAlert size={20} /> FraudScope
+      {/* Subtle Grid Pattern */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+
+      {/* Main Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <header className="sticky top-0 z-40 glass border-b border-stone-200/50">
+          <div className="max-w-[1800px] mx-auto px-8 py-5">
+            <div className="flex items-center justify-between">
+              {/* Logo & Brand */}
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-coral-500 rounded-2xl blur-lg opacity-40" />
+                  <div className="relative gradient-bg p-3 rounded-2xl">
+                    <Shield className="h-7 w-7 text-white" />
+                  </div>
                 </div>
-                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-500 hover:text-slate-900 transition-colors">
-                  <X size={20} />
-                </button>
+                <div>
+                  <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">
+                    Fraud<span className="gradient-text">Scope</span>
+                  </h1>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                    </span>
+                    <span className="text-xs font-semibold text-teal-600">Live Monitoring</span>
+                  </div>
+                </div>
               </div>
-              <nav className="flex-1 px-4 space-y-2">
-                {menuItems.map(item => (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      setActiveView(item.name);
-                      setIsSidebarOpen(false);
-                    }}
-                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      activeView === item.name 
-                        ? 'bg-rose-50 text-rose-600 border border-rose-200 shadow-sm' 
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                    }`}
-                    style={{ fontFamily: 'var(--font-jetbrains-mono)' }}
-                  >
-                    {item.icon}
-                    {item.name}
-                  </button>
-                ))}
-              </nav>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
-      {/* MAIN CONTENT AREA */}
-      <div className="flex-1 h-screen overflow-y-auto w-full p-4 md:p-6 mx-auto grid gap-4 grid-cols-12 auto-rows-min max-w-[1920px]">
-        
-        {/* HEADER */}
-        <div className="col-span-12 flex justify-between items-end mb-2 border-b border-slate-200 pb-4">
-          <div className="flex items-center gap-3">
-            {!isSidebarOpen && (
-              <button 
-                onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 rounded-lg text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors mr-2"
-              >
-                <Menu size={24} />
-              </button>
-            )}
-            <div>
-              <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 flex items-center gap-4 uppercase" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
-                {activeView}
-                <span className="bg-rose-950 text-rose-500 px-2 flex items-center gap-1 rounded tracking-widest uppercase text-xs">
-                  <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" /> Live
-                </span>
-              </h1>
-              <p className="text-slate-500 tracking-widest text-xs uppercase mt-0.5" style={{ fontFamily: 'var(--font-jetbrains-mono)' }}>Real-Time Fintech Fraud Intelligence Dashboard</p>
+              {/* Quick Stats Pills */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-stone-200 shadow-soft">
+                  <Zap className="h-4 w-4 text-coral-500" />
+                  <span className="text-sm font-bold text-stone-700">199,619</span>
+                  <span className="text-xs text-stone-500">txns</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-stone-200 shadow-soft">
+                  <TrendingUp className="h-4 w-4 text-primary-500" />
+                  <span className="text-sm font-bold text-stone-700">0.33%</span>
+                  <span className="text-xs text-stone-500">fraud rate</span>
+                </div>
+                <a 
+                  href="/api/onepager" 
+                  target="_blank"
+                  className="flex items-center gap-2 gradient-bg px-5 py-2.5 rounded-full text-white font-semibold text-sm shadow-glow-primary hover:scale-105 transition-transform"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Export Report
+                </a>
+              </div>
             </div>
           </div>
-          <div className="hidden md:flex flex-col items-end text-xs text-slate-500" style={{ fontFamily: 'var(--font-jetbrains-mono)' }}>
-            <div>Ping: 14ms | Servers: OK</div>
-            <div>Last Updated: {new Date(lastUpdate).toISOString().split('T')[1].slice(0,-1)}</div>
-          </div>
-        </div>
+        </header>
 
-        {/* CONDITIONALLY RENDER VIEWS */}
-        
-        {activeView === 'Overview' && (
-          <>
-            <div className="col-span-12 mb-2">
-              <KPIGrid stats={data.stats} />
+        {/* Dashboard Grid */}
+        <main className="max-w-[1800px] mx-auto px-8 py-8">
+          {/* Hero KPI Section */}
+          <section className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-8 rounded-full gradient-bg" />
+              <h2 className="text-lg font-bold text-stone-700">Key Metrics</h2>
             </div>
-            <div className="col-span-12 md:col-span-6 lg:col-span-4">
-              <MerchantRiskTreemap data={data.merchant} />
-            </div>
-            <div className="col-span-12 md:col-span-6 lg:col-span-8">
-              <VelocityTimeline data={data.velocity} />
-            </div>
-            <div className="col-span-12">
-              <AIInsightPanel data={data.insight} />
-            </div>
-          </>
-        )}
+            <KPICards />
+          </section>
 
-        {activeView === 'Live Feeds' && (
-          <>
-            <div className="col-span-12 lg:col-span-6">
-              <FlaggedTransactionFeed data={data.feed} />
+          {/* Main Charts Grid */}
+          <section className="grid grid-cols-12 gap-6 mb-8">
+            {/* Heatmap - Full Width */}
+            <div className="col-span-12 xl:col-span-8">
+              <HeatmapChart />
             </div>
-            <div className="col-span-12 lg:col-span-6">
-              <ImpossibleTravelFeed data={data.travel} />
+            
+            {/* Live Feed */}
+            <div className="col-span-12 xl:col-span-4 xl:row-span-2">
+              <LiveFeed />
             </div>
-            <div className="col-span-12">
-              <OffenderLeaderboard data={data.offenders} />
-            </div>
-          </>
-        )}
 
-        {activeView === 'Analytics' && (
-          <>
-            <div className="col-span-12">
-              <FraudTimeHeatmap data={data.heatmap} />
+            {/* Charts Row */}
+            <div className="col-span-12 xl:col-span-4">
+              <MerchantChart />
             </div>
-            <div className="col-span-12 lg:col-span-6">
-              <CityFraudBar data={data.cities} />
+            <div className="col-span-12 xl:col-span-4">
+              <CityChart />
             </div>
-            <div className="col-span-12 lg:col-span-6">
-              <ThresholdIndicator />
-            </div>
-            <div className="col-span-12 lg:col-span-6">
-              <FalsePositiveDonut />
-            </div>
-          </>
-        )}
+          </section>
 
-        {activeView === 'Network' && (
-          <>
-            <div className="col-span-12 lg:col-span-8">
-              {data.citypairs && <CityNetworkGraph data={data.citypairs} />}
+          {/* Investigation Section */}
+          <section className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-8 rounded-full bg-gradient-to-r from-coral-500 to-pink-500" />
+              <h2 className="text-lg font-bold text-stone-700">Risk Investigation</h2>
             </div>
-            <div className="col-span-12 lg:col-span-4 flex flex-col">
-              <Card className="flex-1 bg-slate-50 border-indigo-200">
-                <h3 className="text-sm font-bold text-indigo-600 uppercase tracking-widest mb-4 border-b border-indigo-100 pb-2" style={{ fontFamily: 'var(--font-jetbrains-mono)' }}>
-                  Syndicate Analysis
-                </h3>
-                <p className="text-sm text-slate-600" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Our real-time D3 engine mapping connections between compromised merchants, duplicate logins, and anomalous geospatial behaviors. Wait for AI nodes to surface matching IPs.
-                </p>
-              </Card>
+            
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 lg:col-span-6">
+                <ThresholdChart />
+              </div>
+              <div className="col-span-12 lg:col-span-6">
+                <ImpossibleTravelFeed />
+              </div>
             </div>
-          </>
-        )}
-        
+          </section>
+
+          {/* Offenders Section */}
+          <section className="pb-24">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-8 rounded-full bg-gradient-to-r from-teal-500 to-primary-500" />
+              <h2 className="text-lg font-bold text-stone-700">Entity Analysis</h2>
+            </div>
+            <RepeatOffendersList />
+          </section>
+        </main>
       </div>
+
+      {/* Floating AI Chat */}
+      <AIChat />
     </div>
   );
 }

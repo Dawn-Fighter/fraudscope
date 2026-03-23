@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { cityFraudData } from '@/lib/mockData';
+import { getCityStats } from '@/lib/dataLoader';
 
 export async function GET() {
-  return NextResponse.json(cityFraudData);
+  const cityData = getCityStats();
+  return NextResponse.json(cityData);
 }

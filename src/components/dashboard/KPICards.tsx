@@ -1,8 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, AlertTriangle, DollarSign, Clock, CalendarDays, TrendingUp } from "lucide-react";
+import { Activity, AlertTriangle, Plane, TrendingUp, Clock, CalendarDays } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -10,9 +9,9 @@ export function KPICards() {
   const { data, isLoading } = useSWR("/api/stats", fetcher);
 
   if (isLoading || !data) return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6 animate-pulse">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
       {[...Array(6)].map((_, i) => (
-        <Card key={i} className="bg-white border-slate-200 shadow-sm h-[120px]" />
+        <div key={i} className="bg-white/60 backdrop-blur rounded-3xl h-[140px] animate-pulse border border-stone-200/50" />
       ))}
     </div>
   );
@@ -22,71 +21,94 @@ export function KPICards() {
       title: "Total Transactions",
       value: data.totalTransactions?.toLocaleString() || "0",
       icon: Activity,
-      trend: "+12.5% vs yesterday",
-      color: "text-blue-600",
-      bg: "bg-blue-50"
+      subtitle: "All processed",
+      gradient: "from-primary-500 to-primary-600",
+      iconBg: "bg-primary-100",
+      iconColor: "text-primary-600",
+      glow: "shadow-glow-primary",
     },
     {
-      title: "Flagged (Fraud)",
+      title: "Flagged Fraud",
       value: data.flaggedCount?.toLocaleString() || "0",
       icon: AlertTriangle,
-      trend: `${data.fraudRate || 0}% rate`,
-      color: "text-rose-600",
-      bg: "bg-rose-50"
+      subtitle: `${data.fraudRate || 0}% rate`,
+      gradient: "from-coral-500 to-pink-500",
+      iconBg: "bg-coral-100",
+      iconColor: "text-coral-600",
+      glow: "shadow-glow-coral",
+      highlight: true,
     },
     {
       title: "Impossible Travel",
       value: data.impossibleTravelCount?.toLocaleString() || "0",
-      icon: DollarSign,
-      trend: "Velocity alerts",
-      color: "text-amber-600",
-      bg: "bg-amber-50"
+      icon: Plane,
+      subtitle: "Velocity alerts",
+      gradient: "from-teal-500 to-teal-600",
+      iconBg: "bg-teal-100",
+      iconColor: "text-teal-600",
+      glow: "shadow-glow-teal",
     },
     {
-      title: "Highest Risk Node",
+      title: "Top Risk Category",
       value: data.topRiskCategory?.name || "N/A",
       icon: TrendingUp,
-      trend: "By volume",
-      color: "text-violet-600",
-      bg: "bg-violet-50"
+      subtitle: `${data.topRiskCategory?.rate || 0}% fraud rate`,
+      gradient: "from-pink-500 to-rose-500",
+      iconBg: "bg-pink-100",
+      iconColor: "text-pink-600",
     },
     {
-      title: "Peak Fraud Time",
-      value: `${data.peakFraudHour || 0}:00 AM`,
+      title: "Peak Fraud Hour",
+      value: `${data.peakFraudHour || 0}:00`,
       icon: Clock,
-      trend: "UTC Standard",
-      color: "text-emerald-600",
-      bg: "bg-emerald-50"
+      subtitle: "UTC timezone",
+      gradient: "from-violet-500 to-purple-600",
+      iconBg: "bg-violet-100",
+      iconColor: "text-violet-600",
     },
     {
-      title: "Weekend Risk",
+      title: "Weekend Fraud",
       value: `${data.weekendFraudPercent || 0}%`,
       icon: CalendarDays,
-      trend: "Of all fraud",
-      color: "text-cyan-600",
-      bg: "bg-cyan-50"
+      subtitle: "Sat-Sun incidents",
+      gradient: "from-amber-500 to-orange-500",
+      iconBg: "bg-amber-100",
+      iconColor: "text-amber-600",
     }
   ];
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
       {kpis.map((kpi, i) => (
-        <Card key={i} className="bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wide">{kpi.title}</CardTitle>
-            <div className={`p-2 rounded-lg ${kpi.bg}`}>
-              <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
+        <div 
+          key={i} 
+          className={`
+            relative overflow-hidden bg-white rounded-3xl p-5 border border-stone-200/50 
+            shadow-soft card-hover group
+            ${kpi.highlight ? kpi.glow : ''}
+          `}
+        >
+          {/* Gradient accent bar */}
+          <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${kpi.gradient}`} />
+          
+          {/* Content */}
+          <div className="flex items-start justify-between mb-3">
+            <div className={`${kpi.iconBg} p-2.5 rounded-2xl group-hover:scale-110 transition-transform`}>
+              <kpi.icon className={`h-5 w-5 ${kpi.iconColor}`} />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className={`text-2xl font-black ${i === 1 ? 'text-rose-600' : 'text-slate-800'}`}>
+          </div>
+          
+          <div className="space-y-1">
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide">{kpi.title}</p>
+            <p className={`text-2xl font-extrabold tracking-tight ${kpi.highlight ? 'gradient-text' : 'text-stone-900'}`}>
               {kpi.value}
-            </div>
-            <p className="text-xs text-slate-500 mt-1 font-medium font-mono">
-              {kpi.trend}
             </p>
-          </CardContent>
-        </Card>
+            <p className="text-xs font-medium text-stone-400">{kpi.subtitle}</p>
+          </div>
+
+          {/* Decorative gradient blob */}
+          <div className={`absolute -bottom-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br ${kpi.gradient} opacity-10 blur-xl group-hover:opacity-20 transition-opacity`} />
+        </div>
       ))}
     </div>
   );
