@@ -14,7 +14,7 @@ import { FlaggedCategoryChart } from "@/components/dashboard/FlaggedCategoryChar
 import { ThreatRadarChart } from "@/components/dashboard/ThreatRadarChart";
 import { SimulationAlerts } from "@/components/dashboard/SimulationAlerts";
 import { AIChat } from "@/components/ai/AIChat";
-import { Shield, Sparkles, TrendingUp, Zap, Play, Square } from "lucide-react";
+import { Shield, Sparkles, TrendingUp, Zap, Play, Square, RotateCcw } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -30,6 +30,14 @@ export default function Dashboard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: newState ? "start" : "stop" })
     });
+  };
+
+  const resetData = async () => {
+    if (isSimulating) {
+      await toggleSimulation(); // stop it first
+    }
+    await fetch("/api/simulate/reset", { method: "POST" });
+    window.location.reload(); // Hard refresh to reset all UI states instantly
   };
 
   return (
@@ -91,6 +99,14 @@ export default function Dashboard() {
                         Live Attack Sim
                       </>
                     )}
+                  </button>
+
+                  <button 
+                    onClick={resetData}
+                    title="Reset to Original CSV Data"
+                    className="flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 p-2.5 rounded-lg border border-slate-200 transition-colors"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
                   </button>
 
                   <a 

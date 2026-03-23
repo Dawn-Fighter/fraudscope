@@ -70,6 +70,12 @@ export function stopSimulation() {
   }
 }
 
+export function resetData() {
+  // Clear the in-memory cache so it forces a fresh read from the CSV
+  cachedData = null;
+  stopSimulation();
+}
+
 export function getIsSimulating() {
   return isSimulatingFlag;
 }

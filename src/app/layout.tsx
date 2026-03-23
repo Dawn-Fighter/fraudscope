@@ -1,24 +1,35 @@
-import type { Metadata } from 'next';
-import { Space_Grotesk, JetBrains_Mono, Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
+import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' });
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const outfit = Outfit({ 
+  subsets: ["latin"],
+  variable: '--font-outfit',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'FRAUDSCOPE | Real-Time Fraud Intelligence',
-  description: 'Real-time fintech fraud intelligence dashboard.',
+  title: "FraudShield | Financial Crime Intelligence",
+  description: "Real-time transaction anomaly and fraud visualization dashboard.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans bg-slate-100 text-slate-900 min-h-screen selection:bg-amber-200 overflow-x-hidden`}>
+    <html lang="en" className={outfit.variable}>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.addEventListener('beforeunload', function() {
+              navigator.sendBeacon('/api/simulate/reset');
+            });
+          `
+        }} />
+      </head>
+      <body className="font-outfit antialiased selection:bg-primary-100 selection:text-primary-900">
         {children}
       </body>
     </html>
