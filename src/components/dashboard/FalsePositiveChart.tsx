@@ -4,10 +4,9 @@ import useSWR from "swr";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { ShieldCheck, TrendingDown } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function FalsePositiveChart() {
-  const { data: stats } = useSWR("/api/stats", fetcher);
+  const { data: stats } = useSWR("/api/stats");
 
   // We will derive a simulated false positive trend from our total flagged data,
   // making it look like a steady drop as our rules "learn"

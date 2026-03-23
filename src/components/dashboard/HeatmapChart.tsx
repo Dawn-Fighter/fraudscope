@@ -3,12 +3,11 @@
 import useSWR from "swr";
 import { Activity } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function HeatmapChart() {
-  const { data, isLoading } = useSWR("/api/heatmap", fetcher);
+  const { data, isLoading } = useSWR("/api/heatmap");
 
   if (isLoading || !data || !Array.isArray(data)) {
     return (

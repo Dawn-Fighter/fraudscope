@@ -12,10 +12,9 @@ import {
 } from "recharts";
 import { Zap } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function VelocityChart() {
-  const { data, isLoading } = useSWR("/api/velocity", fetcher);
+  const { data, isLoading } = useSWR("/api/velocity");
 
   if (isLoading || !data) {
     return (

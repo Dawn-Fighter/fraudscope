@@ -16,11 +16,9 @@ import { SimulationAlerts } from "@/components/dashboard/SimulationAlerts";
 import { AIChat } from "@/components/ai/AIChat";
 import { Shield, Sparkles, TrendingUp, Zap, Play, Square, RotateCcw } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export default function Dashboard() {
   const [isSimulating, setIsSimulating] = useState(false);
-  const { data: stats } = useSWR("/api/stats", fetcher);
+  const { data: stats } = useSWR("/api/stats");
 
   const toggleSimulation = async () => {
     const newState = !isSimulating;
@@ -41,7 +39,10 @@ export default function Dashboard() {
   };
 
   return (
-    <SWRConfig value={{ refreshInterval: isSimulating ? 1500 : 0 }}>
+    <SWRConfig value={{ 
+      refreshInterval: isSimulating ? 1500 : 0,
+      fetcher: (url: string) => fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`).then(res => res.json())
+    }}>
       <div className="min-h-screen bg-slate-50 relative pb-20">
         {/* Subtle Grid Pattern */}
         <div className="fixed inset-0 bg-[linear-gradient(to_right,#00000004_1px,transparent_1px),linear-gradient(to_bottom,#00000004_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />

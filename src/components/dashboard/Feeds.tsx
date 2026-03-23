@@ -3,10 +3,9 @@
 import useSWR from "swr";
 import { Plane, UserX, Clock, ArrowRight, AlertTriangle } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function ImpossibleTravelFeed() {
-  const { data, isLoading } = useSWR("/api/travel", fetcher);
+  const { data, isLoading } = useSWR("/api/travel");
 
   if (isLoading || !data) {
     return <div className="bg-white rounded-3xl h-[400px] animate-pulse border border-stone-200/50 shadow-soft" />;
@@ -83,7 +82,7 @@ export function ImpossibleTravelFeed() {
 }
 
 export function RepeatOffendersList() {
-  const { data, isLoading } = useSWR("/api/offenders", fetcher);
+  const { data, isLoading } = useSWR("/api/offenders");
 
   if (isLoading || !data) {
     return <div className="bg-white rounded-3xl h-[300px] animate-pulse border border-stone-200/50 shadow-soft" />;

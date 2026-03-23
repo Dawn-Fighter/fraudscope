@@ -5,7 +5,6 @@ import useSWR from "swr";
 import { Globe, AlertTriangle } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface CityData {
   city: string;
@@ -30,7 +29,7 @@ const cityCoordinates: Record<string, [number, number]> = {
 const geoUrl = "/features.json";
 
 export function CityChart() {
-  const { data, isLoading } = useSWR<CityData[]>("/api/cities", fetcher);
+  const { data, isLoading } = useSWR<CityData[]>("/api/cities");
   const [hoveredCity, setHoveredCity] = useState<CityData | null>(null);
 
   if (isLoading || !data) {

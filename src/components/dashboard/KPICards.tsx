@@ -3,10 +3,9 @@
 import useSWR from "swr";
 import { Activity, AlertTriangle, Plane, TrendingUp, Clock, CalendarDays } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function KPICards() {
-  const { data, isLoading } = useSWR("/api/stats", fetcher);
+  const { data, isLoading } = useSWR("/api/stats");
 
   if (isLoading || !data) return (
     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">

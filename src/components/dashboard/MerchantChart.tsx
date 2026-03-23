@@ -4,7 +4,6 @@ import useSWR from "swr";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Store } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface MerchantData {
   name: string;
@@ -12,7 +11,7 @@ interface MerchantData {
 }
 
 export function MerchantChart() {
-  const { data, isLoading } = useSWR("/api/merchant", fetcher);
+  const { data, isLoading } = useSWR("/api/merchant");
 
   if (isLoading || !data) {
     return <div className="bg-white rounded-2xl h-full min-h-[420px] animate-pulse border border-slate-200 shadow-soft" />;

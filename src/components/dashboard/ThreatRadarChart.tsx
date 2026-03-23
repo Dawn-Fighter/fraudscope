@@ -3,10 +3,9 @@ import useSWR from "swr";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { Crosshair, ShieldAlert, Zap, CheckCircle2 } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function ThreatRadarChart() {
-  const { data, isLoading } = useSWR("/api/radar", fetcher);
+  const { data, isLoading } = useSWR("/api/radar");
 
   if (isLoading || !data) {
     return <div className="bg-slate-900 rounded-3xl h-[400px] animate-pulse border border-slate-800 shadow-soft" />;

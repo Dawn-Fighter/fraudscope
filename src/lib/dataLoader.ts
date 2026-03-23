@@ -335,7 +335,7 @@ export function getImpossibleTravel(limit = 20) {
             userId,
             tx1: { city: prev.Location_City, timestamp: prev.Timestamp, amount: prev.Amount_USD },
             tx2: { city: curr.Location_City, timestamp: curr.Timestamp, amount: curr.Amount_USD },
-            timeDiffMinutes: Math.round(timeDiff),
+            timeDiffMinutes: Math.max(1, Math.round(timeDiff)),
           });
         }
       }

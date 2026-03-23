@@ -4,7 +4,6 @@ import useSWR from "swr";
 import { useState } from "react";
 import { Clock, ShieldAlert, MapPin, Store, UserX } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface Alert {
   transactionId: string;
@@ -16,7 +15,7 @@ interface Alert {
 }
 
 export function LiveFeed() {
-  const { data, isLoading } = useSWR<Alert[]>("/api/feed", fetcher);
+  const { data, isLoading } = useSWR<Alert[]>("/api/feed");
   const [frozenUsers, setFrozenUsers] = useState<Set<string>>(new Set());
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 

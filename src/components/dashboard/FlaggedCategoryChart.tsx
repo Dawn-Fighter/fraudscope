@@ -4,7 +4,6 @@ import useSWR from "swr";
 import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, Tooltip } from "recharts";
 import { ShieldAlert } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface MerchantData {
   name: string;
@@ -12,7 +11,7 @@ interface MerchantData {
 }
 
 export function FlaggedCategoryChart() {
-  const { data, isLoading } = useSWR("/api/merchant", fetcher);
+  const { data, isLoading } = useSWR("/api/merchant");
 
   if (isLoading || !data) {
     return <div className="bg-white rounded-3xl h-[400px] animate-pulse border border-slate-200/50 shadow-soft" />;
