@@ -24,7 +24,7 @@ export function KPICards() {
       subtitle: "All processed",
       accent: "bg-primary-500",
       bgClass: "bg-white hover:bg-slate-50",
-      iconBg: "bg-primary-50 text-primary-600",
+      iconBg: "bg-primary-50 text-primary-600 border-primary-100",
     },
     {
       title: "Flagged Fraud",
@@ -32,8 +32,8 @@ export function KPICards() {
       icon: AlertTriangle,
       subtitle: `${data.fraudRate || 0}% rate`,
       accent: "bg-rose-500",
-      bgClass: "bg-rose-50/30 border-rose-100 hover:bg-rose-50",
-      iconBg: "bg-rose-100 text-rose-600",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-rose-50 text-rose-600 border-rose-100",
       highlight: true,
     },
     {
@@ -41,36 +41,38 @@ export function KPICards() {
       value: data.impossibleTravel?.toLocaleString() || "0",
       icon: Plane,
       subtitle: "Velocity alerts",
-      accent: "bg-violet-500",
-      bgClass: "bg-violet-50/30 border-violet-100 hover:bg-violet-50",
-      iconBg: "bg-violet-100 text-violet-600",
+      accent: "bg-rose-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-rose-50 text-rose-600 border-rose-100",
+      highlight: true,
     },
     {
       title: "Top Risk Category",
       value: data.highestRiskCategory || "N/A",
       icon: TrendingUp,
       subtitle: `${data.topRiskCategory?.rate || 0}% rate`,
-      accent: "bg-amber-500",
-      bgClass: "bg-amber-50/30 border-amber-100 hover:bg-amber-50",
-      iconBg: "bg-amber-100 text-amber-600",
+      accent: "bg-primary-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-primary-50 text-primary-600 border-primary-100",
     },
     {
       title: "Velocity Spike Users",
       value: data.velocitySpikeUsers?.toLocaleString() || "0",
       icon: Clock,
       subtitle: "UTC window",
-      accent: "bg-emerald-500",
-      bgClass: "bg-emerald-50/30 border-emerald-100 hover:bg-emerald-50",
-      iconBg: "bg-emerald-100 text-emerald-600",
+      accent: "bg-rose-500",
+      bgClass: "bg-white hover:bg-slate-50",
+      iconBg: "bg-rose-50 text-rose-600 border-rose-100",
+      highlight: true,
     },
     {
       title: "Fraud Rate",
       value: `${data.fraudRate || 0}%`,
       icon: CalendarDays,
       subtitle: "Weekly incidents",
-      accent: "bg-slate-800",
-      bgClass: "bg-slate-900 text-white border-slate-800 hover:bg-slate-800",
-      iconBg: "bg-slate-800 text-slate-300",
+      accent: "bg-primary-500",
+      bgClass: "bg-primary-900 text-white border-primary-800 hover:bg-primary-800",
+      iconBg: "bg-primary-800 text-primary-300 border-primary-700",
       darkTheme: true,
     }
   ];
@@ -84,14 +86,14 @@ export function KPICards() {
         >
           {/* Subtle Accent Glow */}
           {!kpi.darkTheme && (
-            <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-20 ${kpi.accent} pointer-events-none`} />
+            <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 ${kpi.accent} pointer-events-none`} />
           )}
           
           <div className="flex items-center gap-3 mb-4">
-            <div className={`${kpi.iconBg} p-2.5 rounded-xl border ${kpi.darkTheme ? 'border-slate-700' : 'border-white/50 shadow-sm'} group-hover:scale-110 transition-transform duration-300`}>
+            <div className={`${kpi.iconBg} p-2.5 rounded-xl border group-hover:scale-110 transition-transform duration-300`}>
               <kpi.icon className="h-4 w-4" />
             </div>
-            <p className={`text-[10px] font-bold uppercase tracking-widest ${kpi.darkTheme ? 'text-slate-400' : 'text-slate-500'} leading-tight`}>
+            <p className={`text-[10px] font-bold uppercase tracking-widest ${kpi.darkTheme ? 'text-primary-200' : 'text-slate-500'} leading-tight`}>
               {kpi.title}
             </p>
           </div>
@@ -100,7 +102,7 @@ export function KPICards() {
             <p className={`text-3xl font-black tracking-tight ${kpi.highlight ? 'text-rose-600' : kpi.darkTheme ? 'text-white' : 'text-slate-900'}`}>
               {kpi.value}
             </p>
-            <p className={`text-[11px] font-bold uppercase tracking-wider ${kpi.darkTheme ? 'text-slate-500' : 'text-slate-400'}`}>
+            <p className={`text-[11px] font-bold uppercase tracking-wider ${kpi.darkTheme ? 'text-primary-300' : 'text-slate-400'}`}>
               {kpi.subtitle}
             </p>
           </div>
