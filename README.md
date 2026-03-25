@@ -38,8 +38,5 @@ src/
 - **Transaction Velocity**: 24-hour comparative monitoring of txn volume.
 - **Geographic Risk Map**: Visualizing global exposure and incident hotspots.
 - **Threat Radar**: Mapping multi-dimensional risk scores across diverse categories.
-- **Heatmap Intelligence**: Analyzing peak hours for fraudulent activity across the week.
+- **Heatmap Intelligence**: Analyzing peak hours for fraudulent activity across the we
 
-## ⚖️ License
-
-Private Project. Created for high-density fraud monitoring and intelligence.
